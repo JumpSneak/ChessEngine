@@ -32,7 +32,7 @@ public class Board extends Group {
     @Override
     public void draw(Batch batch, float parentAlpha) {
 //        pieceslist.get(0).posx = Gdx.input.getX();
-//        pieceslist.get(0).posy = Gdx.graphics.getHeight()- Gdx.input.getY(); // testingg
+//        pieceslist.get(0).posy = Gdx.graphics.getHeight()- Gdx.input.getY(); // testing
         ShapeDrawer shaper = new ShapeDrawer(batch, muell);
         for (int y = 0; y < rowsy; y++) {
             for (int x = 0; x < colsx; x++) {
