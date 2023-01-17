@@ -9,7 +9,7 @@ import de.chessy.utils.HttpResponse;
 public class PlayPieceHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) {
-        try {
+        try(exchange) {
             HttpRequest<ChessMoveDto> request = new HttpRequest<>(exchange, ChessMoveDto.class);
             System.out.println(request.getBody());
             int gameId = Integer.parseInt(request.getHeaders().getFirst("gameId"));
