@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.jumpsneak.chessengine.transfer.Client;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.awt.event.MouseEvent;
@@ -27,12 +28,14 @@ public class Board extends Group {
     float tileSize = 106;
     float colsx = 8;
     float rowsy = 8;
+    boolean boardFlipped = false;
     List<Piece> pieceslist = new ArrayList<>();
 
     public Board() {
         originx = Gdx.graphics.getWidth() / 2 - colsx * tileSize / 2;
         originy = Gdx.graphics.getHeight() / 2 - rowsy * tileSize / 2;
         initPieces();
+        Client.createGame(this);
     }
 
     @Override
@@ -102,6 +105,7 @@ public class Board extends Group {
             if(otherPiece != null && otherPiece.isWhite != piece.isWhite){
                 pieceslist.remove(otherPiece);
             }
+            Client.sendMove(piece, toTilex, toTiley);
             piece.tilex = toTilex;
             piece.tiley = toTiley;
             successful = true;
@@ -134,6 +138,18 @@ public class Board extends Group {
         pieceslist.add(new Bishop(this, 5, 7, false));
         pieceslist.add(new Queen(this, 3, 7, false));
         pieceslist.add(new King(this, 4, 7, false));
+    }
+    public void setWhite(boolean toWhite){
+        whiteTurn = toWhite;
+        if(!toWhite){
+            flipBoard();
+        }
+    }
+    public void flipBoard(){
+        boardFlipped = !boardFlipped;
+        for(Piece p: pieceslist){
+            p.isWhite = !p.isWhite;
+        }
     }
     public void positionPiece(Piece p, int newtileX, int newtileY){
         p.posx = this.originx + newtileX * this.tileSize;

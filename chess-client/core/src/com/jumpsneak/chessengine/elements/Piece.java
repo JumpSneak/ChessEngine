@@ -35,4 +35,13 @@ public abstract class Piece{
                 mainTexture.getWidth() / 6, mainTexture.getHeight() / 2);
     }
     public abstract boolean isLegalMove(int newTilePosX, int newTilePosY);
+
+
+    public int getTilex() {
+        return tilex;
+    }
+
+    public int getTiley() {
+        return tiley;
+    }
 }
