@@ -1,6 +1,7 @@
 package de.chessy.utils;
 
 import com.sun.net.httpserver.HttpExchange;
+import de.chessy.server.responses.ErrorResponse;
 
 import java.io.OutputStream;
 

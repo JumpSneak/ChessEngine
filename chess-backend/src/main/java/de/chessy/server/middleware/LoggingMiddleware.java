@@ -1,21 +1,13 @@
 package de.chessy.server.middleware;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 
-import java.io.IOException;
-
-public class LoggingMiddleware implements HttpHandler {
-    private final HttpHandler next;
-
-    public LoggingMiddleware(HttpHandler next) {
-        this.next = next;
-    }
+public class LoggingMiddleware implements Middleware {
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange, MiddlewareNextFunction next)  {
         System.out.println("Incoming request: " + exchange.getRequestURI());
-        next.handle(exchange);
+        next.next(exchange);
         System.out.println("Outgoing response: " + exchange.getResponseCode());
     }
 }
