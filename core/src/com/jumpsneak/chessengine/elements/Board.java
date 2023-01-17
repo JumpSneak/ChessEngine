@@ -1,11 +1,15 @@
 package com.jumpsneak.chessengine.elements;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -15,6 +19,7 @@ import java.util.List;
 
 public class Board extends Group {
     TextureRegion muell = new TextureRegion(new Texture("white.png"));
+    Piece activePiece = null;
     // Attributes
     float originx = 80;
     float originy = 80;
@@ -33,6 +38,11 @@ public class Board extends Group {
     public void draw(Batch batch, float parentAlpha) {
 //        pieceslist.get(0).posx = Gdx.input.getX();
 //        pieceslist.get(0).posy = Gdx.graphics.getHeight()- Gdx.input.getY(); // testing
+        if(activePiece != null){
+            activePiece.posx = Gdx.input.getX()-activePiece.textureRegion.getRegionWidth()/2;
+            activePiece.posy = Gdx.graphics.getHeight()- Gdx.input.getY()-activePiece.textureRegion.getRegionHeight()/2;
+        }
+        inputUpdate();
         ShapeDrawer shaper = new ShapeDrawer(batch, muell);
         for (int y = 0; y < rowsy; y++) {
             for (int x = 0; x < colsx; x++) {
@@ -48,6 +58,23 @@ public class Board extends Group {
         }
         for (int i = 0; i < pieceslist.size(); i++) {
             batch.draw(pieceslist.get(i).textureRegion, pieceslist.get(i).posx, pieceslist.get(i).posy, tileSize, tileSize);
+        }
+    }
+    public void inputUpdate(){
+        if(Gdx.input.justTouched()){
+            float height = tileSize * rowsy;
+            int xtile =(int)((Gdx.input.getX() - originx)/tileSize);
+            int ytile =(int)((Gdx.graphics.getHeight() -Gdx.input.getY()-originy)/tileSize);
+
+            for(Piece p: pieceslist){
+                if(p.tilex == xtile && p.tiley == ytile){
+                   activePiece = p;
+                   return;
+                }
+            }
+        }else if(!Gdx.input.isTouched()){
+
+            activePiece = null;
         }
     }
 
