@@ -67,6 +67,7 @@ public class Board extends Group {
     }
 
     public void inputUpdate() {
+        // Drag and Drop
         if (Gdx.input.justTouched()) {
             float height = tileSize * rowsy;
             int xtile = getMouseTileX();
@@ -88,9 +89,17 @@ public class Board extends Group {
             }
             activePiece = null;
         }
+        // testing
+        if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+            flipBoard();
+        }
     }
 
     public boolean movePiece(Piece piece, int toTilex, int toTiley) {
+//        if (boardFlipped) {
+//            toTilex = invertCord(toTilex, true);
+//            toTiley = invertCord(toTiley, false);
+//        }
         Piece otherPiece = null;
         for (Piece p : pieceslist) {
             if (p.tilex == toTilex && p.tiley == toTiley) {
@@ -102,7 +111,7 @@ public class Board extends Group {
         if (piece.isWhite == whiteTurn // players turn
                 && (otherPiece == null || otherPiece.isWhite != piece.isWhite) // can be placed
                 && piece.isLegalMove(toTilex, toTiley)) { // legal piece move
-            if(otherPiece != null && otherPiece.isWhite != piece.isWhite){
+            if (otherPiece != null && otherPiece.isWhite != piece.isWhite) {
                 pieceslist.remove(otherPiece);
             }
             Client.sendMove(piece, toTilex, toTiley);
@@ -139,22 +148,38 @@ public class Board extends Group {
         pieceslist.add(new Queen(this, 3, 7, false));
         pieceslist.add(new King(this, 4, 7, false));
     }
-    public void setWhite(boolean toWhite){
+
+    public void setWhite(boolean toWhite) {
         whiteTurn = toWhite;
-        if(!toWhite){
+        if (!toWhite) {
             flipBoard();
         }
     }
-    public void flipBoard(){
+
+    public void flipBoard() {
         boardFlipped = !boardFlipped;
-        for(Piece p: pieceslist){
-            p.isWhite = !p.isWhite;
+        for (Piece p : pieceslist) {
+            positionPiece(p, p.tilex, p.tiley);
         }
     }
-    public void positionPiece(Piece p, int newtileX, int newtileY){
+
+    public float invertCord(float input, boolean isX) {
+        if (isX) {
+            return colsx*tileSize-originx - (input-originx);
+        } else {
+            return rowsy*tileSize-originy - (input-originy);
+        }
+    }
+
+    public void positionPiece(Piece p, int newtileX, int newtileY) {
         p.posx = this.originx + newtileX * this.tileSize;
         p.posy = this.originy + newtileY * this.tileSize;
+        if(boardFlipped){
+            p.posx = invertCord(p.posx, true);
+            p.posy = invertCord(p.posy, false);
+        }
     }
+
     public int getMouseTileX() {
         return (int) ((Gdx.input.getX() - originx) / tileSize);
 
