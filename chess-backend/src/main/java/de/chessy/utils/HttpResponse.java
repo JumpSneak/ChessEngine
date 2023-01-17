@@ -25,7 +25,6 @@ public class HttpResponse<T> {
             exchange.sendResponseHeaders(statusCode, 0);
             OutputStream responseBody = exchange.getResponseBody();
             responseBody.write(Serializer.serialize(body).getBytes());
-            responseBody.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {

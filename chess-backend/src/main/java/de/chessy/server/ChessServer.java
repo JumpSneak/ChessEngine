@@ -16,9 +16,9 @@ public class ChessServer {
     private ChessServer(int port) throws IOException {
         server = HttpServer.create(
                 new InetSocketAddress(port), 0);
+        server.createContext("/game/playPiece", new LoggingMiddleware(new PlayPieceHandler()));
         server.createContext("/", new LoggingMiddleware(new HelloWorldHandler()));
-        server.createContext("/game/create", new CreateGameHandler());
-        server.createContext("/game/play-piece", new PlayPieceHandler());
+        server.createContext("/game/create", new LoggingMiddleware(new CreateGameHandler()));
         server.setExecutor(null);
     }
 
