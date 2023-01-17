@@ -2,7 +2,6 @@ package de.chessy.utils;
 
 import com.sun.net.httpserver.HttpExchange;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 public class HttpResponse<T> {
@@ -25,7 +24,7 @@ public class HttpResponse<T> {
             exchange.sendResponseHeaders(statusCode, 0);
             OutputStream responseBody = exchange.getResponseBody();
             responseBody.write(Serializer.serialize(body).getBytes());
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
             exchange.close();

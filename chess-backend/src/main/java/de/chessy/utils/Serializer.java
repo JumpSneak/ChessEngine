@@ -1,7 +1,7 @@
 package de.chessy.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,22 +13,30 @@ public class Serializer {
     }
 
     public static String serialize(Object object) {
-        Gson gson = new Gson();
-        return gson.toJson(object);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(object);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static <T> T fromJson(String body, Class<T> clazz) {
-        Gson gson = new Gson();
-        return gson.fromJson(body, clazz);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(body, clazz);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static <T> T fromJson(JsonReader reader, Class<T> clazz) {
-        Gson gson = new Gson();
-        return gson.fromJson(reader, clazz);
-    }
 
     public static <T> T parse(InputStream body, Class<T> clazz) {
-        var jsonReader = new Gson().newJsonReader(new InputStreamReader(body, StandardCharsets.UTF_8));
-        return fromJson(jsonReader, clazz);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(new InputStreamReader(body, StandardCharsets.UTF_8), clazz);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
