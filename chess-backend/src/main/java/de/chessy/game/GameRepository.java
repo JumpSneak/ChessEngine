@@ -21,10 +21,10 @@ public class GameRepository {
         this.games = new ArrayList<>();
     }
 
-    private List<Game> games;
+    private final List<Game> games;
 
     public Game create() {
-        Game game = new Game(currentId++);
+        Game game = new Game(currentId++, 1);
         games.add(game);
         return game;
     }
