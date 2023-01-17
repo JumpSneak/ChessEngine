@@ -36,11 +36,9 @@ public class Board extends Group {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-//        pieceslist.get(0).posx = Gdx.input.getX();
-//        pieceslist.get(0).posy = Gdx.graphics.getHeight()- Gdx.input.getY(); // testing
-        if(activePiece != null){
-            activePiece.posx = Gdx.input.getX()-activePiece.textureRegion.getRegionWidth()/2;
-            activePiece.posy = Gdx.graphics.getHeight()- Gdx.input.getY()-activePiece.textureRegion.getRegionHeight()/2;
+        if (activePiece != null) {
+            activePiece.posx = Gdx.input.getX() - activePiece.textureRegion.getRegionWidth() / 2;
+            activePiece.posy = Gdx.graphics.getHeight() - Gdx.input.getY() - activePiece.textureRegion.getRegionHeight() / 2;
         }
         inputUpdate();
         ShapeDrawer shaper = new ShapeDrawer(batch, muell);
@@ -60,33 +58,51 @@ public class Board extends Group {
             batch.draw(pieceslist.get(i).textureRegion, pieceslist.get(i).posx, pieceslist.get(i).posy, tileSize, tileSize);
         }
     }
-    public void inputUpdate(){
-        if(Gdx.input.justTouched()){
-            float height = tileSize * rowsy;
-            int xtile =(int)((Gdx.input.getX() - originx)/tileSize);
-            int ytile =(int)((Gdx.graphics.getHeight() -Gdx.input.getY()-originy)/tileSize);
 
-            for(Piece p: pieceslist){
-                if(p.tilex == xtile && p.tiley == ytile){
-                   activePiece = p;
-                   return;
+    public void inputUpdate() {
+        if (Gdx.input.justTouched()) {
+            float height = tileSize * rowsy;
+            int xtile = getMouseTileX();
+            int ytile = getMouseTileY();
+
+            for (Piece p : pieceslist) {
+                if (p.tilex == xtile && p.tiley == ytile) {
+                    activePiece = p;
+                    pieceslist.remove(p);
+                    pieceslist.add(p);
+                    return;
                 }
             }
-        }else if(!Gdx.input.isTouched()){
-
+        } else if (activePiece != null && !Gdx.input.isTouched()) {
+            int xtile = getMouseTileX();
+            int ytile = getMouseTileY();
+            movePiece(activePiece, xtile, ytile);
             activePiece = null;
         }
     }
 
-    public boolean movePiece(Piece piece, int toTilex, int toTiley){
+    public boolean movePiece(Piece piece, int toTilex, int toTiley) {
         boolean isfree = true;
-        for(Piece p: pieceslist){
-            if(p.tilex == toTilex && p.tiley == toTiley){
-                isfree = false;
+        for (Piece p : pieceslist) {
+            if (p.tilex == toTilex && p.tiley == toTiley) {
+                if(p.isWhite != piece.isWhite){
+                    pieceslist.remove(p);
+
+                }else {
+                    isfree = false;
+                }
+                break;
             }
         }
+        if(isfree){
+            piece.tilex = toTilex;
+            piece.tiley = toTiley;
+        }
+        piece.posx = this.originx + piece.tilex * this.tileSize;
+        piece.posy = this.originy + piece.tiley * this.tileSize;
         return isfree;
     }
+
     public void initPieces() {
         for (int i = 0; i < 8; i++) {
             pieceslist.add(new Pawn(this, i, 1, true));
@@ -111,5 +127,12 @@ public class Board extends Group {
         pieceslist.add(new Bishop(this, 5, 7, false));
         pieceslist.add(new Queen(this, 3, 7, false));
         pieceslist.add(new King(this, 4, 7, false));
+    }
+    public int getMouseTileX(){
+        return (int) ((Gdx.input.getX() - originx) / tileSize);
+
+    }
+    public int getMouseTileY(){
+        return (int)((Gdx.graphics.getHeight() - Gdx.input.getY() - originy) / tileSize);
     }
 }
