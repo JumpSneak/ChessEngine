@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  chess-backend:
+    build: .
+    container_name: chess-backend
+    ports:
+      - "7999:7999"
+    restart: always
+    networks:
+      - caddy
+    labels:
+      caddy: chess.julianhartl.dev
+      caddy.reverse_proxy: "{{upstreams 7999}}"
+    depends_on:
+      - chess-db
+  chess-db:
+    image: postgres:15-alpine
+    container_name: chess-db
+    restart: always
+    volumes:
+      - chess_db:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      - caddy
+volumes:
+    chess_db:
+networks:
+  caddy:
+    external: true
