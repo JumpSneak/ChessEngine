@@ -1,4 +1,4 @@
 package de.chessy.server.responses;
 
-public record CreateGameResponse(int gameId) {
+public record CreateGameResponse(int gameId, boolean isWhitePlayer) {
 }

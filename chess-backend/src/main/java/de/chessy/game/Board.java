@@ -1,4 +1,4 @@
 package de.chessy.game;
 
-public record Board(String[][] piece) {
+public record Board(Piece[][] fields) {
 }

@@ -18,6 +18,11 @@ public class HttpResponse<T> {
         return statusCode;
     }
 
+    public int setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+        return statusCode;
+    }
+
     public void send(T body) {
         try {
             exchange.getResponseHeaders().set("Content-Type", contentType);
