@@ -20,6 +20,7 @@ import java.util.List;
 public class Board extends Group {
     TextureRegion muell = new TextureRegion(new Texture("white.png"));
     Piece activePiece = null;
+    boolean whiteTurn = true;
     // Attributes
     float originx = 80;
     float originy = 80;
@@ -36,11 +37,13 @@ public class Board extends Group {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        // dragging
+        inputUpdate();
         if (activePiece != null) {
             activePiece.posx = Gdx.input.getX() - activePiece.textureRegion.getRegionWidth() / 2;
             activePiece.posy = Gdx.graphics.getHeight() - Gdx.input.getY() - activePiece.textureRegion.getRegionHeight() / 2;
         }
-        inputUpdate();
+        // draw chessboard
         ShapeDrawer shaper = new ShapeDrawer(batch, muell);
         for (int y = 0; y < rowsy; y++) {
             for (int x = 0; x < colsx; x++) {
@@ -54,6 +57,7 @@ public class Board extends Group {
 
             }
         }
+        // draw pieces
         for (int i = 0; i < pieceslist.size(); i++) {
             batch.draw(pieceslist.get(i).textureRegion, pieceslist.get(i).posx, pieceslist.get(i).posy, tileSize, tileSize);
         }
@@ -76,31 +80,35 @@ public class Board extends Group {
         } else if (activePiece != null && !Gdx.input.isTouched()) {
             int xtile = getMouseTileX();
             int ytile = getMouseTileY();
-            movePiece(activePiece, xtile, ytile);
+            if (movePiece(activePiece, xtile, ytile)) {
+                whiteTurn = !whiteTurn;
+            }
             activePiece = null;
         }
     }
 
     public boolean movePiece(Piece piece, int toTilex, int toTiley) {
-        boolean isfree = true;
+        Piece otherPiece = null;
         for (Piece p : pieceslist) {
             if (p.tilex == toTilex && p.tiley == toTiley) {
-                if(p.isWhite != piece.isWhite){
-                    pieceslist.remove(p);
-
-                }else {
-                    isfree = false;
-                }
+                otherPiece = p;
                 break;
             }
         }
-        if(isfree){
+        boolean successful = false;
+        if (piece.isWhite == whiteTurn // players turn
+                && (otherPiece == null || otherPiece.isWhite != piece.isWhite) // can be placed
+                && piece.isLegalMove(toTilex, toTiley)) { // legal piece move
+            if(otherPiece != null && otherPiece.isWhite != piece.isWhite){
+                pieceslist.remove(otherPiece);
+            }
             piece.tilex = toTilex;
             piece.tiley = toTiley;
+            successful = true;
         }
         piece.posx = this.originx + piece.tilex * this.tileSize;
         piece.posy = this.originy + piece.tiley * this.tileSize;
-        return isfree;
+        return successful;
     }
 
     public void initPieces() {
@@ -128,11 +136,13 @@ public class Board extends Group {
         pieceslist.add(new Queen(this, 3, 7, false));
         pieceslist.add(new King(this, 4, 7, false));
     }
-    public int getMouseTileX(){
+
+    public int getMouseTileX() {
         return (int) ((Gdx.input.getX() - originx) / tileSize);
 
     }
-    public int getMouseTileY(){
-        return (int)((Gdx.graphics.getHeight() - Gdx.input.getY() - originy) / tileSize);
+
+    public int getMouseTileY() {
+        return (int) ((Gdx.graphics.getHeight() - Gdx.input.getY() - originy) / tileSize);
     }
 }

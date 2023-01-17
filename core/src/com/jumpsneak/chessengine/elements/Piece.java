@@ -34,4 +34,5 @@ public abstract class Piece{
         textureRegion.setRegion(textureId * mainTexture.getWidth() / 6, isWhite ? 0 : mainTexture.getHeight() / 2 + 1,
                 mainTexture.getWidth() / 6, mainTexture.getHeight() / 2);
     }
+    public abstract boolean isLegalMove(int newTilePosX, int newTilePosY);
 }
