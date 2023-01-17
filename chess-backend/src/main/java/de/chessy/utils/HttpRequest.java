@@ -12,6 +12,11 @@ public class HttpRequest<T> {
         this.type = type;
     }
 
+    public HttpRequest(HttpExchange exchange) {
+        this.exchange = exchange;
+        this.type = null;
+    }
+
     private T body;
 
     public T getBody() {
@@ -19,6 +24,10 @@ public class HttpRequest<T> {
             body = Serializer.parse(exchange.getRequestBody(), type);
         }
         return body;
+    }
+
+    public <A> A getAttribute(String name) {
+        return (A) exchange.getAttribute(name);
     }
 
     public Headers getHeaders() {

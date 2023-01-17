@@ -4,7 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 import de.chessy.server.handlers.CreateGameHandler;
 import de.chessy.server.handlers.HelloWorldHandler;
 import de.chessy.server.handlers.PlayPieceHandler;
-import de.chessy.server.middleware.LoggingMiddleware;
+import de.chessy.server.middleware.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -16,9 +16,23 @@ public class ChessServer {
     private ChessServer(int port) throws IOException {
         server = HttpServer.create(
                 new InetSocketAddress(port), 0);
-        server.createContext("/game/playPiece", new LoggingMiddleware(new PlayPieceHandler()));
-        server.createContext("/", new LoggingMiddleware(new HelloWorldHandler()));
-        server.createContext("/game/create", new LoggingMiddleware(new CreateGameHandler()));
+        server.createContext("/game/playPiece", new MiddlewareApplier(
+                new PlayPieceHandler(),
+                new ClosingMiddleware(),
+                new LoggingMiddleware(),
+                new IsWhitePlayerValidatorMiddleware(),
+                new GameIdValidatorMiddleware()
+        ));
+        server.createContext("/", new MiddlewareApplier(
+                new HelloWorldHandler(),
+                new ClosingMiddleware(),
+                new LoggingMiddleware()
+        ));
+        server.createContext("/game/create", new MiddlewareApplier(
+                new CreateGameHandler(),
+                new ClosingMiddleware(),
+                new LoggingMiddleware()
+        ));
         server.setExecutor(null);
     }
 
