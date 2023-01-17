@@ -1,4 +1,5 @@
 package de.chessy.game;
 
-public record Game(int id, int playerCount) {
+public record Game(int id, int playerCount, Board board) {
+
 }
