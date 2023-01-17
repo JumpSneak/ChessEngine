@@ -39,7 +39,7 @@ public class Board extends Group {
     public void draw(Batch batch, float parentAlpha) {
         // dragging
         inputUpdate();
-        if (activePiece != null) {
+        if (Gdx.input.isTouched() && activePiece != null) {
             activePiece.posx = Gdx.input.getX() - activePiece.textureRegion.getRegionWidth() / 2;
             activePiece.posy = Gdx.graphics.getHeight() - Gdx.input.getY() - activePiece.textureRegion.getRegionHeight() / 2;
         }
@@ -106,8 +106,7 @@ public class Board extends Group {
             piece.tiley = toTiley;
             successful = true;
         }
-        piece.posx = this.originx + piece.tilex * this.tileSize;
-        piece.posy = this.originy + piece.tiley * this.tileSize;
+        positionPiece(piece, piece.tilex, piece.tiley);
         return successful;
     }
 
@@ -136,7 +135,10 @@ public class Board extends Group {
         pieceslist.add(new Queen(this, 3, 7, false));
         pieceslist.add(new King(this, 4, 7, false));
     }
-
+    public void positionPiece(Piece p, int newtileX, int newtileY){
+        p.posx = this.originx + newtileX * this.tileSize;
+        p.posy = this.originy + newtileY * this.tileSize;
+    }
     public int getMouseTileX() {
         return (int) ((Gdx.input.getX() - originx) / tileSize);
 

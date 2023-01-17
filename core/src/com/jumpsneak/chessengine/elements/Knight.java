@@ -6,6 +6,6 @@ public class Knight extends Piece{
     }
     @Override
     public boolean isLegalMove(int newTilePosX, int newTilePosY) {
-        return true;
+        return Math.abs(newTilePosX - tilex)*Math.abs(newTilePosY-tiley) == 2;
     }
 }

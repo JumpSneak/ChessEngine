@@ -6,6 +6,9 @@ public class Rook extends Piece{
     }
     @Override
     public boolean isLegalMove(int newTilePosX, int newTilePosY) {
-        return true;
+        boolean legalMove = Math.abs(newTilePosX - tilex) == 0 || Math.abs(newTilePosY-tiley) == 0;
+        boolean legalPosition = true;
+        return legalMove && legalPosition;
     }
 }
+// GraphQL
