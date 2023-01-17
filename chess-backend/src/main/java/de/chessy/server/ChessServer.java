@@ -1,9 +1,9 @@
 package de.chessy.server;
 
 import com.sun.net.httpserver.HttpServer;
-import com.sun.net.httpserver.HttpsServer;
 import de.chessy.server.handlers.CreateGameHandler;
 import de.chessy.server.handlers.HelloWorldHandler;
+import de.chessy.server.handlers.PlayPieceHandler;
 import de.chessy.server.middleware.LoggingMiddleware;
 
 import java.io.IOException;
@@ -18,6 +18,7 @@ public class ChessServer {
                 new InetSocketAddress(port), 0);
         server.createContext("/", new LoggingMiddleware(new HelloWorldHandler()));
         server.createContext("/game/create", new CreateGameHandler());
+        server.createContext("/game/play-piece", new PlayPieceHandler());
         server.setExecutor(null);
     }
 
