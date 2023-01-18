@@ -6,7 +6,9 @@ import com.jumpsneak.chessengine.transfer.Client;
 
 public abstract class Player {
     Board board;
-    public Player(){
+    String name;
+    public Player(String name){
+        this.name = name;
     }
 
     // instantly move

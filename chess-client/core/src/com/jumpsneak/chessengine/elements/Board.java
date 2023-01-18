@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.jumpsneak.chessengine.players.LocalPlayer;
+import com.jumpsneak.chessengine.players.OnlinePlayer;
 import com.jumpsneak.chessengine.players.Player;
 import com.jumpsneak.chessengine.transfer.Client;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -27,6 +28,7 @@ public class Board extends Group {
     Player activePlayer;
     Piece activePiece = null;
     boolean whiteTurn = true;
+    boolean onlineGame = false;
     // Attributes
     float originx = 80;
     float originy = 80;
@@ -45,7 +47,12 @@ public class Board extends Group {
         originy = (Gdx.graphics.getHeight() >> 1) - rowsy * tileSize / 2;
         initPieces();
         activePlayer = playerWhite;
-        Client.createGame(this);
+
+        // choose local or online
+        if(playerWhite instanceof OnlinePlayer || playerBlack instanceof OnlinePlayer) {
+            onlineGame = true;
+            Client.createGame(this);
+        }
     }
 
     @Override
@@ -124,7 +131,9 @@ public class Board extends Group {
             if (otherPiece != null && otherPiece.isWhite != piece.isWhite) {
                 pieceslist.remove(otherPiece);
             }
-            Client.sendMove(piece, toTilex, toTiley);
+            if(onlineGame) {
+                Client.sendMove(piece, toTilex, toTiley);
+            }
             piece.tilex = toTilex;
             piece.tiley = toTiley;
             whiteTurn = !whiteTurn;

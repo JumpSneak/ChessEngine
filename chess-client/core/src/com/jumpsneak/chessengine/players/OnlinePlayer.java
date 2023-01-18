@@ -6,6 +6,10 @@ import com.jumpsneak.chessengine.transfer.Client;
 import com.jumpsneak.chessengine.transfer.MoveInformation;
 
 public class OnlinePlayer extends Player{
+    public OnlinePlayer(String name) {
+        super(name);
+    }
+
     @Override
     public boolean dropPiece(Piece activePiece, int x, int y) {
         return false;

@@ -18,7 +18,7 @@ public class Game extends ApplicationAdapter {
 	@Override
 	public void create () {
 		stage = new Stage(new ScreenViewport());
-		board = new Board(new LocalPlayer(), new OnlinePlayer());
+		board = new Board(new LocalPlayer("First"), new LocalPlayer("second"));
 		stage.addActor(board);
 		Gdx.input.setInputProcessor(stage);
 	}

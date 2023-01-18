@@ -5,8 +5,13 @@ import com.jumpsneak.chessengine.elements.Piece;
 
 public class LocalPlayer extends Player{
 
+    public LocalPlayer(String name) {
+        super(name);
+    }
+
     @Override
     public boolean dropPiece(Piece activePiece, int x, int y) {
+        System.out.println(name);
         return board.movePiece(activePiece, x, y);
     }
 
