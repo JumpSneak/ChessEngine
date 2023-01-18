@@ -2,6 +2,8 @@ package com.jumpsneak.chessengine.transfer;
 
 import com.badlogic.gdx.Net;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.jumpsneak.chessengine.elements.Board;
 import com.jumpsneak.chessengine.elements.Pawn;
 import com.jumpsneak.chessengine.elements.Piece;
@@ -14,7 +16,8 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 public class Client {
-    static String ip_address = "https://chess.julianhartl.dev/";
+    static String ip_address = "http://localhost:7999/";
+    // "https://chess.julianhartl.dev/";
     static int port = 7999;
     static class Endpoints{
         static public String play = "game/playPiece";
@@ -25,8 +28,7 @@ public class Client {
             .followRedirects(HttpClient.Redirect.NORMAL)
             .connectTimeout(Duration.ofSeconds(20))
             .build();
-    static DataInputStream in;
-    static DataOutputStream out;
+    static boolean flipped;
 
     static int id = -1;
 
@@ -38,11 +40,12 @@ public class Client {
     }
 
     public static boolean createGame(Board board) {
+        flipped = board.isBoardFlipped();
         var response = makeRequest("", Endpoints.create);
         Gson g = new Gson();
         CreateGameResponse createGameResponse = g.fromJson(response.body(), CreateGameResponse.class);
         id = createGameResponse.id;
-        board.setWhite(createGameResponse.isWhite);
+        //board.setWhite(createGameResponse.isWhite); falsch
         System.out.println(response.body());
         return response.statusCode() == 200;
     }
@@ -53,6 +56,7 @@ public class Client {
                     .header("Content-Type", "application/json")
                     .header("gameId", "1")
                     .header("playerId", String.valueOf(id))
+                            .header("isWhitePlayer", String.valueOf(flipped))
                     .POST(HttpRequest.BodyPublishers.ofString(new Gson().toJson(o)))
                     .build(), HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {

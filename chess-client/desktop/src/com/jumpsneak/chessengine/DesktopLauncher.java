@@ -11,7 +11,6 @@ import com.jumpsneak.chessengine.transfer.MoveInformation;
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		Client.sendSpam(new MoveInformation(4, 2, 3, 2));
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
 		config.setTitle("ChessEngine");

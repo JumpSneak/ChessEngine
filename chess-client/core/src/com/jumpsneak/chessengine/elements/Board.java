@@ -57,7 +57,6 @@ public class Board extends Group {
                     shaper.setColor(new Color(0xbef7ceff));
                     shaper.filledRectangle(x * tileSize + originx, y * tileSize + originy, tileSize, tileSize);
                 }
-
             }
         }
         // draw pieces
@@ -70,8 +69,8 @@ public class Board extends Group {
         // Drag and Drop
         if (Gdx.input.justTouched()) {
             float height = tileSize * rowsy;
-            int xtile = getMouseTileX();
-            int ytile = getMouseTileY();
+            int xtile = invertTileAccordingly(getMouseTileX(), false);
+            int ytile = invertTileAccordingly(getMouseTileY(), false);
 
             for (Piece p : pieceslist) {
                 if (p.tilex == xtile && p.tiley == ytile) {
@@ -82,8 +81,8 @@ public class Board extends Group {
                 }
             }
         } else if (activePiece != null && !Gdx.input.isTouched()) {
-            int xtile = getMouseTileX();
-            int ytile = getMouseTileY();
+            int xtile = invertTileAccordingly(getMouseTileX(), false);
+            int ytile = invertTileAccordingly(getMouseTileY(), false);
             if (movePiece(activePiece, xtile, ytile)) {
                 whiteTurn = !whiteTurn;
             }
@@ -96,10 +95,6 @@ public class Board extends Group {
     }
 
     public boolean movePiece(Piece piece, int toTilex, int toTiley) {
-//        if (boardFlipped) {
-//            toTilex = invertCord(toTilex, true);
-//            toTiley = invertCord(toTiley, false);
-//        }
         Piece otherPiece = null;
         for (Piece p : pieceslist) {
             if (p.tilex == toTilex && p.tiley == toTiley) {
@@ -118,6 +113,7 @@ public class Board extends Group {
             piece.tilex = toTilex;
             piece.tiley = toTiley;
             successful = true;
+            System.out.println(cordsToString(piece, toTilex, toTiley));
         }
         positionPiece(piece, piece.tilex, piece.tiley);
         return successful;
@@ -165,19 +161,43 @@ public class Board extends Group {
 
     public float invertCord(float input, boolean isX) {
         if (isX) {
-            return colsx*tileSize-originx - (input-originx);
+            return colsx * this.tileSize - (input + 1) * tileSize + originx;
         } else {
-            return rowsy*tileSize-originy - (input-originy);
+            return rowsy * this.tileSize - (input + 1) * tileSize + originy;
+        }
+    }
+
+    public int invertTileAccordingly(int input, boolean isX) {
+        if(boardFlipped) {
+            if (isX) {
+                return (int) colsx - 1 - input;
+            } else {
+                return (int) rowsy - 1 - input;
+            }
+        }else{
+            return input;
         }
     }
 
     public void positionPiece(Piece p, int newtileX, int newtileY) {
         p.posx = this.originx + newtileX * this.tileSize;
         p.posy = this.originy + newtileY * this.tileSize;
-        if(boardFlipped){
-            p.posx = invertCord(p.posx, true);
-            p.posy = invertCord(p.posy, false);
+        if (boardFlipped) {
+            p.posx = invertCord(newtileX, true);
+            p.posy = invertCord(newtileY, false);
+//            p.posx = colsx * this.tileSize - (newtileX+1) * tileSize + originx;
+//            p.posy = rowsy * this.tileSize - (newtileY+1) * tileSize + originy;
         }
+    }
+    public String cordsToString(Piece p, int x, int y){
+        String result = "";
+        if(p != null){
+            result += p.name;
+            result += ": ";
+        }
+        result += Character.toString(x+65);
+        result += y+1;
+        return result;
     }
 
     public int getMouseTileX() {
@@ -187,5 +207,9 @@ public class Board extends Group {
 
     public int getMouseTileY() {
         return (int) ((Gdx.graphics.getHeight() - Gdx.input.getY() - originy) / tileSize);
+    }
+
+    public boolean isBoardFlipped() {
+        return boardFlipped;
     }
 }
