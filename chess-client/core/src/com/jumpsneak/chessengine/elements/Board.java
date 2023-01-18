@@ -49,7 +49,7 @@ public class Board extends Group {
         activePlayer = playerWhite;
 
         // choose local or online
-        if(playerWhite instanceof OnlinePlayer || playerBlack instanceof OnlinePlayer) {
+        if (playerWhite instanceof OnlinePlayer || playerBlack instanceof OnlinePlayer) {
             onlineGame = true;
             Client.createGame(this);
         }
@@ -69,17 +69,27 @@ public class Board extends Group {
         for (int y = 0; y < rowsy; y++) {
             for (int x = 0; x < colsx; x++) {
                 if ((x + y) % 2 == 0) {
-                    shaper.setColor(new Color(0x04cc39ff));
-                    shaper.filledRectangle(x * tileSize + originx, y * tileSize + originy, tileSize, tileSize);
+                    shaper.filledRectangle(x * tileSize + originx, y * tileSize + originy, tileSize, tileSize, new Color(0x04cc39ff));
                 } else {
-                    shaper.setColor(new Color(0xbef7ceff));
-                    shaper.filledRectangle(x * tileSize + originx, y * tileSize + originy, tileSize, tileSize);
+                    shaper.filledRectangle(x * tileSize + originx, y * tileSize + originy, tileSize, tileSize, new Color(0xbef7ceff));
                 }
             }
         }
         // draw pieces
         for (int i = 0; i < pieceslist.size(); i++) {
             batch.draw(pieceslist.get(i).textureRegion, pieceslist.get(i).posx, pieceslist.get(i).posy, tileSize, tileSize);
+        }
+        // draw possible moves
+        if (activePiece != null) {
+            for (int y = 0; y < rowsy; y++) {
+                for (int x = 0; x < colsx; x++) {
+                    if (activePiece.isLegalMove(x, y)) {
+                        shaper.filledCircle(x * tileSize + originx + tileSize / 2,
+                                y * tileSize + originy + tileSize / 2,
+                                tileSize / 8, new Color(0x99999988));
+                    }
+                }
+            }
         }
     }
 
@@ -114,7 +124,7 @@ public class Board extends Group {
     }
 
     public boolean movePiece(Piece piece, int toTilex, int toTiley) {
-        if(piece == null){
+        if (piece == null) {
             return false;
         }
         Piece otherPiece = null;
@@ -131,15 +141,15 @@ public class Board extends Group {
             if (otherPiece != null && otherPiece.isWhite != piece.isWhite) {
                 pieceslist.remove(otherPiece);
             }
-            if(onlineGame) {
+            if (onlineGame) {
                 Client.sendMove(piece, toTilex, toTiley);
             }
             piece.tilex = toTilex;
             piece.tiley = toTiley;
             whiteTurn = !whiteTurn;
-            if(activePlayer == playerWhite){
+            if (activePlayer == playerWhite) {
                 activePlayer = playerBlack;
-            }else{
+            } else {
                 activePlayer = playerWhite;
             }
             successful = true;
@@ -148,14 +158,16 @@ public class Board extends Group {
         positionPiece(piece, piece.tilex, piece.tiley);
         return successful;
     }
-    public Piece getPieceOn(int x, int y){
-        for(Piece p: pieceslist){
-            if(p.tilex == x && p.tiley == y){
+
+    public Piece getPieceOn(int x, int y) {
+        for (Piece p : pieceslist) {
+            if (p.tilex == x && p.tiley == y) {
                 return p;
             }
         }
         return null;
     }
+
     public void initPieces() {
         for (int i = 0; i < 8; i++) {
             pieceslist.add(new Pawn(this, i, 1, true));
@@ -205,13 +217,13 @@ public class Board extends Group {
     }
 
     public int invertTileAccordingly(int input, boolean isX) {
-        if(boardFlipped) {
+        if (boardFlipped) {
             if (isX) {
                 return (int) colsx - 1 - input;
             } else {
                 return (int) rowsy - 1 - input;
             }
-        }else{
+        } else {
             return input;
         }
     }
@@ -226,14 +238,15 @@ public class Board extends Group {
 //            p.posy = rowsy * this.tileSize - (newtileY+1) * tileSize + originy;
         }
     }
-    public String cordsToString(Piece p, int x, int y){
+
+    public String cordsToString(Piece p, int x, int y) {
         String result = "";
-        if(p != null){
+        if (p != null) {
             result += p.name;
             result += ": ";
         }
-        result += Character.toString(x+65);
-        result += y+1;
+        result += Character.toString(x + 65);
+        result += y + 1;
         return result;
     }
 
