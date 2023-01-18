@@ -4,7 +4,6 @@ public class Queen extends Piece{
     public Queen(Board board, int tilex, int tiley, boolean isWhite) {
         super(board, "Queen", tilex, tiley, isWhite, 9, 1);
     }
-//TODO all
     @Override
     public boolean isLegalPosition(int newTilePosX, int newTilePosY) {
         return (Math.abs(newTilePosX - tilex) == 0 || Math.abs(newTilePosY - tiley) == 0)
@@ -13,7 +12,13 @@ public class Queen extends Piece{
 
     @Override
     public boolean isLegalMotion(int newTilePosX, int newTilePosY) {
-        return islegalStraightMotion(newTilePosX, newTilePosY) || islegalDiagonalMotion(newTilePosX, newTilePosY);
+        if(Math.abs(newTilePosX - tilex) == 0 || Math.abs(newTilePosY - tiley) == 0){
+            return islegalStraightMotion(newTilePosX, newTilePosY);
+        }else if(Math.abs(newTilePosX - tilex) == Math.abs(newTilePosY - tiley)){
+            return islegalDiagonalMotion(newTilePosX, newTilePosY);
+        }else{
+            return false;
+        }
     }
 
     public boolean islegalStraightMotion(int newTilePosX, int newTilePosY){
