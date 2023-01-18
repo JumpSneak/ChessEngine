@@ -8,6 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.*;
 import com.jumpsneak.chessengine.elements.Board;
+import com.jumpsneak.chessengine.players.LocalPlayer;
+import com.jumpsneak.chessengine.players.OnlinePlayer;
 
 public class Game extends ApplicationAdapter {
 	Stage stage;
@@ -16,7 +18,7 @@ public class Game extends ApplicationAdapter {
 	@Override
 	public void create () {
 		stage = new Stage(new ScreenViewport());
-		board = new Board();
+		board = new Board(new LocalPlayer(), new OnlinePlayer());
 		stage.addActor(board);
 		Gdx.input.setInputProcessor(stage);
 	}

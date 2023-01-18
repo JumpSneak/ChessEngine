@@ -40,8 +40,18 @@ public abstract class Piece{
     public int getTilex() {
         return tilex;
     }
-
     public int getTiley() {
         return tiley;
+    }
+    public boolean getisWhite() {
+        return isWhite;
+    }
+
+    public void setTilex(int tilex) {
+        this.tilex = tilex;
+    }
+
+    public void setTiley(int tiley) {
+        this.tiley = tiley;
     }
 }

@@ -31,6 +31,7 @@ public class Client {
     static boolean flipped;
 
     static int id = -1;
+    static MoveInformation bufferedInput = null;
 
     public static void sendSpam(MoveInformation moveInformation) {
         System.out.println(makeRequest(new MoveInformation(1, 1, 0, 1), Endpoints.play).body());
@@ -63,6 +64,11 @@ public class Client {
             e.printStackTrace();
             return null;
         }
+    }
+    public static MoveInformation getAndRemoveBufferedInput(){
+        MoveInformation result = bufferedInput;
+        bufferedInput = null;
+        return result;
     }
 }
 

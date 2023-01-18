@@ -11,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.jumpsneak.chessengine.players.LocalPlayer;
+import com.jumpsneak.chessengine.players.Player;
 import com.jumpsneak.chessengine.transfer.Client;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -20,6 +22,9 @@ import java.util.List;
 
 public class Board extends Group {
     TextureRegion muell = new TextureRegion(new Texture("white.png"));
+    Player playerWhite;
+    Player playerBlack;
+    Player activePlayer;
     Piece activePiece = null;
     boolean whiteTurn = true;
     // Attributes
@@ -31,10 +36,15 @@ public class Board extends Group {
     boolean boardFlipped = false;
     List<Piece> pieceslist = new ArrayList<>();
 
-    public Board() {
-        originx = Gdx.graphics.getWidth() / 2 - colsx * tileSize / 2;
-        originy = Gdx.graphics.getHeight() / 2 - rowsy * tileSize / 2;
+    public Board(Player playerWhite, Player playerBlack) {
+        this.playerWhite = playerWhite;
+        this.playerBlack = playerBlack;
+        playerWhite.setBoard(this);
+        playerBlack.setBoard(this);
+        originx = (Gdx.graphics.getWidth() >> 1) - colsx * tileSize / 2;
+        originy = (Gdx.graphics.getHeight() >> 1) - rowsy * tileSize / 2;
         initPieces();
+        activePlayer = playerWhite;
         Client.createGame(this);
     }
 
@@ -42,6 +52,7 @@ public class Board extends Group {
     public void draw(Batch batch, float parentAlpha) {
         // dragging
         inputUpdate();
+        activePlayer.getMove();
         if (Gdx.input.isTouched() && activePiece != null) {
             activePiece.posx = Gdx.input.getX() - activePiece.textureRegion.getRegionWidth() / 2;
             activePiece.posy = Gdx.graphics.getHeight() - Gdx.input.getY() - activePiece.textureRegion.getRegionHeight() / 2;
@@ -67,9 +78,9 @@ public class Board extends Group {
 
     public void inputUpdate() {
         // Drag and Drop
-        if (Gdx.input.justTouched()) {
+        if (Gdx.input.justTouched()) { // begin drag
             float height = tileSize * rowsy;
-            int xtile = invertTileAccordingly(getMouseTileX(), false);
+            int xtile = invertTileAccordingly(getMouseTileX(), true);
             int ytile = invertTileAccordingly(getMouseTileY(), false);
 
             for (Piece p : pieceslist) {
@@ -80,12 +91,13 @@ public class Board extends Group {
                     return;
                 }
             }
-        } else if (activePiece != null && !Gdx.input.isTouched()) {
-            int xtile = invertTileAccordingly(getMouseTileX(), false);
+        } else if (activePiece != null && !Gdx.input.isTouched()) { // drop
+            int xtile = invertTileAccordingly(getMouseTileX(), true);
             int ytile = invertTileAccordingly(getMouseTileY(), false);
-            if (movePiece(activePiece, xtile, ytile)) {
-                whiteTurn = !whiteTurn;
+            if (activePlayer.dropPiece(activePiece, xtile, ytile)) {
+                // move done
             }
+            positionPiece(activePiece, activePiece.tilex, activePiece.tiley);
             activePiece = null;
         }
         // testing
@@ -95,6 +107,9 @@ public class Board extends Group {
     }
 
     public boolean movePiece(Piece piece, int toTilex, int toTiley) {
+        if(piece == null){
+            return false;
+        }
         Piece otherPiece = null;
         for (Piece p : pieceslist) {
             if (p.tilex == toTilex && p.tiley == toTiley) {
@@ -112,13 +127,26 @@ public class Board extends Group {
             Client.sendMove(piece, toTilex, toTiley);
             piece.tilex = toTilex;
             piece.tiley = toTiley;
+            whiteTurn = !whiteTurn;
+            if(activePlayer == playerWhite){
+                activePlayer = playerBlack;
+            }else{
+                activePlayer = playerWhite;
+            }
             successful = true;
             System.out.println(cordsToString(piece, toTilex, toTiley));
         }
         positionPiece(piece, piece.tilex, piece.tiley);
         return successful;
     }
-
+    public Piece getPieceOn(int x, int y){
+        for(Piece p: pieceslist){
+            if(p.tilex == x && p.tiley == y){
+                return p;
+            }
+        }
+        return null;
+    }
     public void initPieces() {
         for (int i = 0; i < 8; i++) {
             pieceslist.add(new Pawn(this, i, 1, true));
