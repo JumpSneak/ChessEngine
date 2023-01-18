@@ -12,17 +12,28 @@ public class Bishop extends Piece {
 
     @Override
     public boolean isLegalMotion(int newTilePosX, int newTilePosY) {
-//        int xmovement = newTilePosX - tilex;
-//        int ymovement = newTilePosY - tiley;
-//        if(xmovement > 0 && ymovement > 0){
-//
-//        }
-//
-//        for (int right = 0; right <; right++) {
-//            for (int left = 0; left <; left++) {
-//
-//            }
-//        }
+        int xmovement = newTilePosX - tilex;
+        int ymovement = newTilePosY - tiley;
+        boolean xup = xmovement > 0;
+        boolean yup = ymovement > 0;
+        int incrX, incrY;
+
+        if (xup && yup) { // up right /
+            incrX = incrY = 1;
+        } else if (!xup && !yup) { // down left /
+            incrX = incrY = -1;
+        } else if (!xup && yup) { // up left \
+            incrX = -1;
+            incrY = 1;
+        } else { // down right \
+            incrX = 1;
+            incrY = -1;
+        }
+        for (int i = 1; i < Math.abs(xmovement); i++) {
+            if(getPieceOn(tilex + incrX*i, tiley + incrY*i)!= null){
+                return false;
+            }
+        }
         return true;
     }
 }

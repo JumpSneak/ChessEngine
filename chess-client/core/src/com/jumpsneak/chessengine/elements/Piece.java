@@ -37,6 +37,9 @@ public abstract class Piece{
     public abstract boolean isLegalPosition(int newTilePosX, int newTilePosY);
     public abstract boolean isLegalMotion(int newTilePosX, int newTilePosY);
     public boolean isLegalMove(int newTilePosX, int newTilePosY){
+        if(newTilePosX < 0 || newTilePosX >= board.colsx || newTilePosY < 0 || newTilePosY>= board.rowsy){
+            return false;
+        }
         Piece targetPiece = getPieceOn(newTilePosX, newTilePosY);
         boolean targetTilePlacable = (targetPiece == null || targetPiece.isWhite != this.isWhite);
         return targetTilePlacable && isLegalPosition(newTilePosX, newTilePosY) && isLegalMotion(newTilePosX, newTilePosY);
