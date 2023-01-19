@@ -21,8 +21,7 @@ import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 public class Client {
-    static String ip_address = "https://api.chess.julianhartl.dev/";
-    // "http://localhost:7999/";
+    static String ip_address = "https://api.chess.julianhartl.dev/";//"http://localhost:7999/";//
     static int port = 7999;
     static class Endpoints{
         static public String play = "game/playPiece";
@@ -46,7 +45,6 @@ public class Client {
         HttpResponse<String> response = makeRequest(new MoveInformation(piece.getTilex(), piece.getTiley(), toTileX, toTileY), Endpoints.play);
         if(response==null || response.statusCode() != 200){
             illegalMove = true;
-            System.out.println("hhhh" + response.statusCode());
         }
     }
 
