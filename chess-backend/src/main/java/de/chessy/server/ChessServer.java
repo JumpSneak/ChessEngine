@@ -2,7 +2,7 @@ package de.chessy.server;
 
 import com.sun.net.httpserver.HttpServer;
 import de.chessy.game.GameStatus;
-import de.chessy.server.handlers.HelloWorldHandler;
+import de.chessy.server.handlers.ApiInformationEndpoint;
 import de.chessy.server.handlers.game.CreateGameEndpoint;
 import de.chessy.server.handlers.game.JoinGameEndpoint;
 import de.chessy.server.handlers.game.PlayPieceHandler;
@@ -20,7 +20,7 @@ public class ChessServer {
         server = HttpServer.create(
                 new InetSocketAddress(port), 0);
         server.createContext("/", new HttpEndpointWrapper(
-                new HelloWorldHandler(),
+                new ApiInformationEndpoint(),
                 new LoggingMiddleware()
         ));
         server.createContext("/game/playPiece", new HttpEndpointWrapper(
