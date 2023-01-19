@@ -12,8 +12,8 @@ import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
 
 public class ClientSocket extends WebSocketClient {
-    public ClientSocket(int gameid, int playerid) throws URISyntaxException {
-        super(new URI("wss://socket.chess.julianhartl.dev"), Map.of("gameid", String.valueOf(gameid), "playerid", String.valueOf(playerid)));
+    public ClientSocket(int gameid, int userid) throws URISyntaxException {
+        super(new URI("wss://socket.chess.julianhartl.dev"), Map.of("gameid", String.valueOf(gameid), "userid", String.valueOf(userid)));
     }
 
     @Override

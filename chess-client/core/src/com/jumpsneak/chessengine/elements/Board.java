@@ -42,7 +42,7 @@ public class Board extends Group {
     List<Piece> pieceslist = new ArrayList<>();
     Piece[][] boardPieces = new Piece[(int)colsx][(int)rowsy];
 
-    public Board(Player playerWhite, Player playerBlack) {
+    public Board(Player playerWhite, Player playerBlack, boolean joining) {
         // Board stuff
         originx = (Gdx.graphics.getWidth() >> 1) - colsx * tileSize / 2;
         originy = (Gdx.graphics.getHeight() >> 1) - rowsy * tileSize / 2;
@@ -54,7 +54,13 @@ public class Board extends Group {
         if (playerWhite instanceof OnlinePlayer || playerBlack instanceof OnlinePlayer) {
             onlineGame = true;
             Client.localPlaysAsWhite = true;
-            if(!Client.createGame(this)){
+            boolean result;
+            if(joining){
+                result = Client.joinGame(this);
+            }else{
+                result = Client.createGame(this);
+            }
+            if(!result){
                 System.out.println("No Connection");
                 System.exit(0);
             }
