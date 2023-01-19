@@ -78,6 +78,9 @@ public class Board extends Group {
         }
         // draw pieces
         for (int i = 0; i < pieceslist.size(); i++) {
+            if(activePiece!= null && pieceslist.get(i) == activePiece){
+                continue;
+            }
             batch.draw(pieceslist.get(i).textureRegion, pieceslist.get(i).posx, pieceslist.get(i).posy, tileSize, tileSize);
         }
         // draw possible moves
@@ -101,7 +104,11 @@ public class Board extends Group {
                     }
                 }
             }
+            // draw active piece on top
+            batch.draw(activePiece.textureRegion, activePiece.posx, activePiece.posy, tileSize, tileSize);
         }
+
+
     }
 
     public void inputUpdate() {
@@ -164,6 +171,15 @@ public class Board extends Group {
                 activePlayer = playerWhite;
             }
             successful = true;
+            if(activePiece instanceof Pawn){
+                if(((Pawn) activePiece).isUntouched()) {
+                    ((Pawn) activePiece).setUntouchedFalse();
+                }
+//                    ((Pawn) activePiece).setEnPassantPossible(true); // ENPASSANT TODO
+//                }else if(((Pawn) activePiece).isEnPassantPossible()){
+//                    ((Pawn) activePiece).setEnPassantPossible(false);
+//                }
+            }
             System.out.println(cordsToString(piece, toTilex, toTiley));
         }
         positionPiece(piece, piece.tilex, piece.tiley);
