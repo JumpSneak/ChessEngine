@@ -77,5 +77,6 @@ project(":core") {
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         implementation 'com.google.code.gson:gson:2.8.8'
+        implementation 'org.java-websocket:Java-WebSocket:1.5.3'
     }
 }

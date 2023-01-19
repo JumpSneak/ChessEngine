@@ -15,6 +15,7 @@ import com.jumpsneak.chessengine.players.LocalPlayer;
 import com.jumpsneak.chessengine.players.OnlinePlayer;
 import com.jumpsneak.chessengine.players.Player;
 import com.jumpsneak.chessengine.transfer.Client;
+import com.jumpsneak.chessengine.transfer.MoveInformation;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -30,6 +31,7 @@ public class Board extends Group {
     Piece activePiece = null;
     boolean whiteTurn = true;
     boolean onlineGame = false;
+    MoveInformation lastMove = null;
     // Attributes
     float originx = 80;
     float originy = 80;
@@ -40,7 +42,7 @@ public class Board extends Group {
     List<Piece> pieceslist = new ArrayList<>();
     Piece[][] boardPieces = new Piece[(int)colsx][(int)rowsy];
 
-    public Board(Player playerWhite, Player playerBlack) {
+    public Board(Player playerWhite, Player playerBlack, boolean joining) {
         // Board stuff
         originx = (Gdx.graphics.getWidth() >> 1) - colsx * tileSize / 2;
         originy = (Gdx.graphics.getHeight() >> 1) - rowsy * tileSize / 2;
@@ -48,15 +50,22 @@ public class Board extends Group {
         // settings for players
         this.playerWhite = playerWhite;
         this.playerBlack = playerBlack;
-        playerWhite.setBoard(this);
-        playerBlack.setBoard(this);
-        playerWhite.setIsWhite(true);
-        playerBlack.setIsWhite(false);
-        activePlayer = playerWhite;
         // choose local or online
         if (playerWhite instanceof OnlinePlayer || playerBlack instanceof OnlinePlayer) {
             onlineGame = true;
-            Client.createGame(this);
+            Client.localPlaysAsWhite = true;
+            boolean result;
+            if(joining){
+                result = Client.joinGame(this);
+            }else{
+                result = Client.createGame(this);
+            }
+            if(!result){
+                System.out.println("No Connection");
+                System.exit(0);
+            }
+        }else{
+            setWhite(true);
         }
     }
 
@@ -118,6 +127,10 @@ public class Board extends Group {
     public void inputUpdate() {
         // Drag and Drop
         if (Gdx.input.justTouched()) { // begin drag
+            if(onlineGame && Client.illegalMove){
+                System.out.println("ILLEGAL");
+                return;
+            }
             float height = tileSize * rowsy;
             int xtile = invertTileAccordingly(getMouseTileX(), true);
             int ytile = invertTileAccordingly(getMouseTileY(), false);
@@ -151,36 +164,39 @@ public class Board extends Group {
             return false;
         }
         Piece otherPiece = getPieceOn(toTilex, toTiley);
-        // old method
-//        for (Piece p : pieceslist) {
-//            if (p.tilex == toTilex && p.tiley == toTiley) {
-//                otherPiece = p;
-//                break;
-//            }
-//        }
         boolean successful = false;
         if (piece.isWhite == whiteTurn // players turn
                 && (otherPiece == null || otherPiece.isWhite != piece.isWhite) // can be placed
-                && piece.isLegalMove(toTilex, toTiley)) { // legal piece move
+                && piece.isLegalMove(toTilex, toTiley)
+                && !isChecked(piece.tilex, piece.tiley, toTilex, toTiley)) { // legal piece move
             if (otherPiece != null && otherPiece.isWhite != piece.isWhite) {
                 removePiece(otherPiece);
             }
             if (onlineGame) {
                 Client.sendMove(piece, toTilex, toTiley);
             }
+            lastMove = new MoveInformation(piece.tilex, piece.tiley, toTilex, toTiley);
             setPieceOn(null, piece.tilex, piece.tiley);
             piece.tilex = toTilex;
             piece.tiley = toTiley;
             setPieceOn(piece, piece.tilex, piece.tiley);
-            if(piece instanceof Pawn){
-                if(((Pawn) piece).isUntouched()) {
-                    ((Pawn) piece).setUntouchedFalse();
+            if(piece.name.equals("Pawn")){
+                // Pawn to Queen conversion
+                if(piece.isWhite && piece.tiley == 7 || !piece.isWhite && piece.tiley == 0){
+                    Piece q = new Queen(this, piece.tilex, piece.tiley, piece.isWhite);
+                    removePiece(piece);
+                    setPieceOn(q, q.tilex, q.tiley);
+                    pieceslist.add(q);
                 }
+            }
+//            if(piece instanceof Pawn){
+//                if(((Pawn) piece).isUntouched()) {
+//                    ((Pawn) piece).setUntouchedFalse(); // untouched determined differently now
 //                    ((Pawn) activePiece).setEnPassantPossible(true); // ENPASSANT TODO
 //                }else if(((Pawn) activePiece).isEnPassantPossible()){
 //                    ((Pawn) activePiece).setEnPassantPossible(false);
 //                }
-            }
+//            }
             System.out.println(activePlayer.toString()+cordsToString(piece, toTilex, toTiley));
             successful = true;
             whiteTurn = !whiteTurn;
@@ -214,7 +230,10 @@ public class Board extends Group {
         boardPieces[x][y] = piece;
         return true;
     }
-
+    public boolean isChecked(int oldx, int oldy, int newx, int newy){
+                                                                                //TODO
+        return false;
+    }
     public void initPieces() {
         for (int i = 0; i < 8; i++) {
             pieceslist.add(new Pawn(this, i, 1, true));
@@ -248,14 +267,25 @@ public class Board extends Group {
         }
     }
     public void removePiece(Piece piece){
-        setPieceOn(piece, piece.tilex, piece.tiley);
+        if(getPieceOn(piece.tilex, piece.tiley) == piece) {
+            setPieceOn(null, piece.tilex, piece.tiley);
+        }
         pieceslist.remove(piece);
     }
     public void setWhite(boolean toWhite) {
-        whiteTurn = toWhite;
+        if(!toWhite){
+            Player zw = playerWhite;
+            this.playerWhite = playerBlack;
+            this.playerBlack = zw;
+        }
+        playerWhite.setBoard(this);
+        playerBlack.setBoard(this);
+        playerWhite.setIsWhite(true);
+        playerBlack.setIsWhite(false);
         if (!toWhite) {
             flipBoard();
         }
+        activePlayer = playerWhite;
     }
 
     public void flipBoard() {
