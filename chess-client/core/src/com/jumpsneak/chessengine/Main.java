@@ -25,6 +25,10 @@ public class Main extends ApplicationAdapter {
 		board = new Board(new LocalPlayer("Michi"), new OnlinePlayer("Loser"), true);
 		stage.addActor(board);
 	}
+	public void local(){
+		board = new Board(new LocalPlayer("Michi"), new LocalPlayer("Loser"), true);
+		stage.addActor(board);
+	}
 	@Override
 	public void create () {
 //		board = new Board(new LocalPlayer("Michi"), new OnlinePlayer("Loser"));
@@ -36,6 +40,7 @@ public class Main extends ApplicationAdapter {
 	public void render () {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.H)) host();
 		else if(Gdx.input.isKeyJustPressed(Input.Keys.J)) join();
+		else if(Gdx.input.isKeyJustPressed(Input.Keys.L)) local();
 		ScreenUtils.clear(0, 0, 0, 1);
 		stage.draw();
 	}
