@@ -25,6 +25,15 @@ public class ChessSocket extends WebSocketServer {
         System.out.println("New connection from " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
         System.out.println("GameId: " + gameId);
         conn.send("Welcome to game " + gameId + "!");
+        // do something after 5 seconds
+        new Thread(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            conn.send("Hello from the server");
+        }).start();
     }
 
     @Override
