@@ -1,6 +1,7 @@
 package com.jumpsneak.chessengine.transfer;
 
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.utils.JsonReader;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -28,20 +29,21 @@ public class Client {
             .followRedirects(HttpClient.Redirect.NORMAL)
             .connectTimeout(Duration.ofSeconds(20))
             .build();
-    static boolean flipped;
-
+    public static boolean localPlaysAsWhite = true;
+    public static boolean illegalMove = false;
     static int id = -1;
     static MoveInformation bufferedInput = null;
-
     public static void sendSpam(MoveInformation moveInformation) {
         System.out.println(makeRequest(new MoveInformation(1, 1, 0, 1), Endpoints.play).body());
     }
     public static void sendMove(Piece piece, int toTileX, int toTileY){
-        makeRequest(new MoveInformation(piece.getTilex(), piece.getTiley(), toTileX, toTileY), Endpoints.play);
+        HttpResponse<String> response = makeRequest(new MoveInformation(piece.getTilex(), piece.getTiley(), toTileX, toTileY), Endpoints.play);
+        if(response==null || response.statusCode() != 200){
+            illegalMove = true;
+        }
     }
 
     public static boolean createGame(Board board) {
-        flipped = board.isBoardFlipped();
         var response = makeRequest("", Endpoints.create);
         Gson g = new Gson();
         CreateGameResponse createGameResponse = g.fromJson(response.body(), CreateGameResponse.class);
@@ -57,7 +59,7 @@ public class Client {
                     .header("Content-Type", "application/json")
                     .header("gameId", "1")
                     .header("playerId", String.valueOf(id))
-                            .header("isWhitePlayer", String.valueOf(flipped))
+                            .header("isWhitePlayer", String.valueOf(localPlaysAsWhite))
                     .POST(HttpRequest.BodyPublishers.ofString(new Gson().toJson(o)))
                     .build(), HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {

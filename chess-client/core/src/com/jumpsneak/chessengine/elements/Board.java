@@ -56,6 +56,7 @@ public class Board extends Group {
         // choose local or online
         if (playerWhite instanceof OnlinePlayer || playerBlack instanceof OnlinePlayer) {
             onlineGame = true;
+            Client.localPlaysAsWhite = true;
             Client.createGame(this);
         }
     }
@@ -118,6 +119,9 @@ public class Board extends Group {
     public void inputUpdate() {
         // Drag and Drop
         if (Gdx.input.justTouched()) { // begin drag
+            if(onlineGame && Client.illegalMove){
+                return;
+            }
             float height = tileSize * rowsy;
             int xtile = invertTileAccordingly(getMouseTileX(), true);
             int ytile = invertTileAccordingly(getMouseTileY(), false);
@@ -151,13 +155,6 @@ public class Board extends Group {
             return false;
         }
         Piece otherPiece = getPieceOn(toTilex, toTiley);
-        // old method
-//        for (Piece p : pieceslist) {
-//            if (p.tilex == toTilex && p.tiley == toTiley) {
-//                otherPiece = p;
-//                break;
-//            }
-//        }
         boolean successful = false;
         if (piece.isWhite == whiteTurn // players turn
                 && (otherPiece == null || otherPiece.isWhite != piece.isWhite) // can be placed
