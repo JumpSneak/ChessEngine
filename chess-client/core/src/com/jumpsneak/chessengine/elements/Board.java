@@ -41,15 +41,18 @@ public class Board extends Group {
     Piece[][] boardPieces = new Piece[(int)colsx][(int)rowsy];
 
     public Board(Player playerWhite, Player playerBlack) {
+        // Board stuff
+        originx = (Gdx.graphics.getWidth() >> 1) - colsx * tileSize / 2;
+        originy = (Gdx.graphics.getHeight() >> 1) - rowsy * tileSize / 2;
+        initPieces();
+        // settings for players
         this.playerWhite = playerWhite;
         this.playerBlack = playerBlack;
         playerWhite.setBoard(this);
         playerBlack.setBoard(this);
-        originx = (Gdx.graphics.getWidth() >> 1) - colsx * tileSize / 2;
-        originy = (Gdx.graphics.getHeight() >> 1) - rowsy * tileSize / 2;
-        initPieces();
+        playerWhite.setIsWhite(true);
+        playerBlack.setIsWhite(false);
         activePlayer = playerWhite;
-
         // choose local or online
         if (playerWhite instanceof OnlinePlayer || playerBlack instanceof OnlinePlayer) {
             onlineGame = true;
@@ -169,23 +172,23 @@ public class Board extends Group {
             piece.tilex = toTilex;
             piece.tiley = toTiley;
             setPieceOn(piece, piece.tilex, piece.tiley);
-            whiteTurn = !whiteTurn;
-            if (activePlayer == playerWhite) {
-                activePlayer = playerBlack;
-            } else {
-                activePlayer = playerWhite;
-            }
-            successful = true;
-            if(activePiece instanceof Pawn){
-                if(((Pawn) activePiece).isUntouched()) {
-                    ((Pawn) activePiece).setUntouchedFalse();
+            if(piece instanceof Pawn){
+                if(((Pawn) piece).isUntouched()) {
+                    ((Pawn) piece).setUntouchedFalse();
                 }
 //                    ((Pawn) activePiece).setEnPassantPossible(true); // ENPASSANT TODO
 //                }else if(((Pawn) activePiece).isEnPassantPossible()){
 //                    ((Pawn) activePiece).setEnPassantPossible(false);
 //                }
             }
-            System.out.println(cordsToString(piece, toTilex, toTiley));
+            System.out.println(activePlayer.toString()+cordsToString(piece, toTilex, toTiley));
+            successful = true;
+            whiteTurn = !whiteTurn;
+            if (activePlayer == playerWhite) {
+                activePlayer = playerBlack;
+            } else {
+                activePlayer = playerWhite;
+            }
         }
         positionPiece(piece, piece.tilex, piece.tiley);
         return successful;
@@ -297,7 +300,7 @@ public class Board extends Group {
         String result = "";
         if (p != null) {
             result += p.name;
-            result += ": ";
+            result += " ";
         }
         result += Character.toString(x + 65);
         result += y + 1;

@@ -7,7 +7,9 @@ import com.jumpsneak.chessengine.transfer.Client;
 public abstract class Player {
     Board board;
     String name;
-    public Player(String name){
+    boolean isWhite = false;
+
+    public Player(String name) {
         this.name = name;
     }
 
@@ -19,5 +21,13 @@ public abstract class Player {
 
     public void setBoard(Board board) {
         this.board = board;
+    }
+
+    public void setIsWhite(boolean b) {
+        this.isWhite = b;
+    }
+
+    public String toString() {
+        return (isWhite ? "WHITE" : "BLACK") +": "+ name + "\t";
     }
 }
