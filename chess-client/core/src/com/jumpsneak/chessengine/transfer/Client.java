@@ -1,19 +1,15 @@
 package com.jumpsneak.chessengine.transfer;
 
-import com.badlogic.gdx.Net;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.jumpsneak.chessengine.elements.Board;
-import com.jumpsneak.chessengine.elements.Pawn;
 import com.jumpsneak.chessengine.elements.Piece;
+import com.jumpsneak.chessengine.transfer.responses.ServerCreateGameResponse;
+import com.jumpsneak.chessengine.utils.Serializer;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -59,15 +55,9 @@ public class Client {
             var response = makeRequest("", Endpoints.create);
             System.out.println(response);
             if (response.statusCode() != 200) return false;
-            JsonValue j = new JsonReader().parse(response.body());
-            gameid = j.getInt("gameId");
-            board.setWhite(j.getBoolean("isWhitePlayer"));
-//            Gson g = new Gson();
-//            CreateGameResponse createGameResponse = g.fromJson(response.body(), CreateGameResponse.class);
-//            gameid = createGameResponse.id;
-            //board.setWhite(createGameResponse.isWhite); falsch
-//            System.out.println(createGameResponse.isWhite);
-            // movesocket
+            ServerCreateGameResponse createGameResponse = Serializer.fromJson(response.body(), ServerCreateGameResponse.class);
+            gameid = createGameResponse.game().id();
+            board.setWhite(createGameResponse.isWhitePlayer());
             clientSocket = new ClientSocket(gameid, playerid);
             return response.statusCode() == 200 && clientSocket.connectBlocking(10, TimeUnit.SECONDS);
         } catch (Exception e) {
@@ -75,6 +65,7 @@ public class Client {
             return false;
         }
     }
+
     public static boolean joinGame(Board board) {
         try {
             playerid = 1;
