@@ -184,6 +184,7 @@ public class Board extends Group {
                 // Pawn to Queen conversion
                 if(piece.isWhite && piece.tiley == 7 || !piece.isWhite && piece.tiley == 0){
                     Piece q = new Queen(this, piece.tilex, piece.tiley, piece.isWhite);
+                    positionPiece(q, q.tilex, q.tiley);
                     removePiece(piece);
                     setPieceOn(q, q.tilex, q.tiley);
                     pieceslist.add(q);
