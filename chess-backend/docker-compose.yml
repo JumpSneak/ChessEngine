@@ -5,16 +5,13 @@ services:
     build: .
     container_name: chess-backend
     restart: always
-    ports:
-      - "7999:7999"
-      - "8000:8000"
     networks:
       - caddy
     labels:
-      caddy: chess.julianhartl.dev
-      caddy.sockets: /sockets/*
-      caddy.sockets.0_reverse_proxy: "{{upstreams 8000}}"
-      caddy.1_reverse_proxy: "{{upstreams 7999}}"
+      caddy_0: api.chess.julianhartl.dev
+      caddy_0.reverse_proxy: "{{upstreams 7999}}"
+      caddy_1: ws.chess.julianhartl.dev
+      caddy_1.reverse_proxy: "{{upstreams 8000}}"
     depends_on:
       - chess-db
   chess-db:
