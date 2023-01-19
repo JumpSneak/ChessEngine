@@ -10,7 +10,7 @@ public class ChessSocket extends WebSocketServer {
     private static final int port = 8000;
 
     public ChessSocket() {
-        super(new InetSocketAddress("localhost", port));
+        super(new InetSocketAddress(port));
     }
 
     @Override

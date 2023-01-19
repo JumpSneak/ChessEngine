@@ -6,8 +6,8 @@ services:
     container_name: chess-backend
     restart: always
     ports:
-      - 7999:7999
-      - 8000:8000
+      - "7999:7999"
+      - "8000:8000"
     networks:
       - caddy
     labels:
