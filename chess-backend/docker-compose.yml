@@ -14,7 +14,7 @@ services:
       caddy_0: chess.julianhartl.dev
       caddy.@ws.0_header: Connection *Upgrade*
       caddy.@ws.1_header: Upgrade websocket
-      caddy.0_reverse_proxy: "@ws {{upstreams 8000}}"
+      caddy.0_reverse_proxy: "@ws /sockets* {{upstreams 8000}}"
       caddy.1_reverse_proxy: "{{upstreams 7999}}"
     depends_on:
       - chess-db
