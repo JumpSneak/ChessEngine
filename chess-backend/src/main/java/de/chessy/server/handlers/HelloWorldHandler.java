@@ -1,13 +1,13 @@
 package de.chessy.server.handlers;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import de.chessy.utils.HttpEndpoint;
+import de.chessy.utils.HttpRequest;
 import de.chessy.utils.HttpResponse;
 
-public class HelloWorldHandler implements HttpHandler {
+public class HelloWorldHandler extends HttpEndpoint {
+
     @Override
-    public void handle(HttpExchange exchange) {
-        HttpResponse<String> response = new HttpResponse<>(exchange);
+    public void onRequest(HttpRequest request, HttpResponse response) {
         response.send("Hello World!");
     }
 }

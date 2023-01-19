@@ -1,13 +1,14 @@
 package de.chessy.server.middleware;
 
-import com.sun.net.httpserver.HttpExchange;
+import de.chessy.utils.HttpRequest;
+import de.chessy.utils.HttpResponse;
 
 public class LoggingMiddleware implements Middleware {
 
     @Override
-    public void handle(HttpExchange exchange, MiddlewareNextFunction next)  {
-        System.out.println("Incoming request: " + exchange.getRequestURI());
-        next.next(exchange);
-        System.out.println("Outgoing response: " + exchange.getResponseCode());
+    public void handle(HttpRequest request, HttpResponse response, MiddlewareNextFunction next) {
+        System.out.println("LoggingMiddleware: " + request.getMethod() + " " + request.getPath());
+        next.next(request, response);
+        System.out.println("LoggingMiddleware: " + response.getStatusCode());
     }
 }

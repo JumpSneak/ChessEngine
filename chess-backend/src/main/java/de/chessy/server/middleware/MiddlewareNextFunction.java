@@ -1,8 +1,9 @@
 package de.chessy.server.middleware;
 
-import com.sun.net.httpserver.HttpExchange;
+import de.chessy.utils.HttpRequest;
+import de.chessy.utils.HttpResponse;
 
 public interface MiddlewareNextFunction {
-    void next(HttpExchange exchange);
+    void next(HttpRequest request, HttpResponse response);
 
 }

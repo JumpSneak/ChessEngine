@@ -1,11 +1,10 @@
 package de.chessy.utils;
 
 import com.sun.net.httpserver.HttpExchange;
-import de.chessy.server.responses.ErrorResponse;
 
 import java.io.OutputStream;
 
-public class HttpResponse<T> {
+public class HttpResponse {
     private HttpExchange exchange;
 
     private int statusCode = 200;
@@ -19,12 +18,11 @@ public class HttpResponse<T> {
         return statusCode;
     }
 
-    public int setStatusCode(int statusCode) {
+    public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
-        return statusCode;
     }
 
-    public void send(T body) {
+    public void send(Object body) {
         try {
             exchange.getResponseHeaders().set("Content-Type", contentType);
             exchange.sendResponseHeaders(statusCode, 0);
@@ -35,5 +33,10 @@ public class HttpResponse<T> {
         } finally {
             exchange.close();
         }
+    }
+
+    public boolean isClosed() {
+        int responseCode = exchange.getResponseCode();
+        return responseCode != -1;
     }
 }

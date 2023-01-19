@@ -5,7 +5,6 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 import java.net.InetSocketAddress;
-import java.util.Iterator;
 
 public class ChessSocket extends WebSocketServer {
     private static final int port = 8000;
@@ -14,13 +13,15 @@ public class ChessSocket extends WebSocketServer {
         super(new InetSocketAddress(port));
     }
 
+    private static final String GAME_ID_KEY = "gameid";
+
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        if(!handshake.hasFieldValue("gameId")) {
-            conn.close(-1, "gameId is missing");
+        if (!handshake.hasFieldValue(GAME_ID_KEY)) {
+            conn.close(-1, GAME_ID_KEY + " is missing");
             return;
         }
-        int gameId = Integer.parseInt(handshake.getFieldValue("gameid"));
+        int gameId = Integer.parseInt(handshake.getFieldValue(GAME_ID_KEY));
         System.out.println("New connection from " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
         System.out.println("GameId: " + gameId);
         conn.send("Welcome to game " + gameId + "!");

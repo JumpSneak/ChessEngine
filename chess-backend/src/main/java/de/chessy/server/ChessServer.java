@@ -17,27 +17,23 @@ public class ChessServer {
     private ChessServer(int port) throws IOException {
         server = HttpServer.create(
                 new InetSocketAddress(port), 0);
-        server.createContext("/game/playPiece", new MiddlewareApplier(
+        server.createContext("/game/playPiece", new HttpEndpointWrapper(
                 new PlayPieceHandler(),
-                new ClosingMiddleware(),
                 new LoggingMiddleware(),
                 new UserAuthenticationMiddleware(),
                 new GameIdValidatorMiddleware()
         ));
-        server.createContext("/", new MiddlewareApplier(
+        server.createContext("/", new HttpEndpointWrapper(
                 new HelloWorldHandler(),
-                new ClosingMiddleware(),
                 new LoggingMiddleware()
         ));
-        server.createContext("/game/create", new MiddlewareApplier(
+        server.createContext("/game/create", new HttpEndpointWrapper(
                 new CreateGameHandler(),
-                new ClosingMiddleware(),
                 new LoggingMiddleware(),
                 new UserAuthenticationMiddleware()
         ));
-        server.createContext("/user/me", new MiddlewareApplier(
+        server.createContext("/user/me", new HttpEndpointWrapper(
                 new MeEndpoint(),
-                new ClosingMiddleware(),
                 new LoggingMiddleware(),
                 new UserAuthenticationMiddleware()
         ));

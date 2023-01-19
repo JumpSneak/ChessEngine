@@ -5,6 +5,9 @@ import de.chessy.server.responses.ErrorResponse;
 public class Errors {
     public static final ErrorResponse GAME_NOT_FOUND = new ErrorResponse("Game not found", 1, "Check if the game id is correct");
     public static final ErrorResponse UNAUTHORIZED = new ErrorResponse("Unauthorized", 2, "Check if the userId is correct");
+    public static final ErrorResponse NOT_FOUND = new ErrorResponse("Not found", 3, "Check if the url is correct");
+
+    public static final ErrorResponse INTERNAL_SERVER_ERROR = new ErrorResponse("Internal server error", 4, "Check the server logs");
 
     public static ErrorResponse missingParameter(String parameterName) {
         return new ErrorResponse("Missing parameter", 3, "Check if the parameter " + parameterName + " is present");
