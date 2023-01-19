@@ -34,7 +34,7 @@ public class ChessSocket extends WebSocketServer {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            conn.send(Serializer.serialize(new PieceWasPlayedEvent(0, 0, 1, 1)));
+            conn.send(Serializer.serialize(new PieceWasPlayedEvent(0, 1, 0, 2)));
         }).start();
     }
 
