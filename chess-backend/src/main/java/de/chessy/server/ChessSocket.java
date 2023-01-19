@@ -1,5 +1,7 @@
 package de.chessy.server;
 
+import de.chessy.server.events.PieceWasPlayedEvent;
+import de.chessy.utils.Serializer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -32,7 +34,7 @@ public class ChessSocket extends WebSocketServer {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            conn.send("Hello from the server");
+            conn.send(Serializer.serialize(new PieceWasPlayedEvent(0, 0, 1, 1)));
         }).start();
     }
 
