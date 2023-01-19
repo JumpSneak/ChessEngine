@@ -29,7 +29,7 @@ public class ChessServer {
                 new UserAuthenticationMiddleware(),
                 new GameIdValidatorMiddleware(),
                 new GameAuthenticationMiddleware(),
-                new GameStatusRequirementMiddleware(GameStatus.STARTED)
+                new GameStatusRequirementMiddleware(GameStatus.IN_PROGRESS)
         ));
         server.createContext("/game/create", new HttpEndpointWrapper(
                 new CreateGameEndpoint(),

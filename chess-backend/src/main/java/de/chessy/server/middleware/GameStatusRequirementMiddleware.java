@@ -18,9 +18,9 @@ public class GameStatusRequirementMiddleware implements Middleware {
     public void handle(HttpRequest request, HttpResponse response, MiddlewareNextFunction next) {
 
         Game game = request.getAttribute("game");
-        if (game.getStatus() != requiredStatus) {
+        if (game.status != requiredStatus) {
             response.setStatusCode(400);
-            response.send(Errors.gameStatusNotMatching(requiredStatus, game.getStatus()));
+            response.send(Errors.gameStatusNotMatching(requiredStatus, game.status));
             return;
         }
         next.next(request, response);
