@@ -10,6 +10,9 @@ import com.badlogic.gdx.utils.viewport.*;
 import com.jumpsneak.chessengine.elements.Board;
 import com.jumpsneak.chessengine.players.LocalPlayer;
 import com.jumpsneak.chessengine.players.OnlinePlayer;
+import com.jumpsneak.chessengine.transfer.ClientSocket;
+
+import java.net.URISyntaxException;
 
 public class Game extends ApplicationAdapter {
 	Stage stage;
@@ -18,7 +21,7 @@ public class Game extends ApplicationAdapter {
 	@Override
 	public void create () {
 		stage = new Stage(new ScreenViewport());
-		board = new Board(new LocalPlayer("Michi"), new LocalPlayer("Loser"));
+		board = new Board(new LocalPlayer("Michi"), new OnlinePlayer("Loser"));
 		stage.addActor(board);
 		Gdx.input.setInputProcessor(stage);
 	}

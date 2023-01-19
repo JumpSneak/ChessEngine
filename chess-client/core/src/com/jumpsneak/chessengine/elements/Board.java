@@ -50,16 +50,16 @@ public class Board extends Group {
         // settings for players
         this.playerWhite = playerWhite;
         this.playerBlack = playerBlack;
-        playerWhite.setBoard(this);
-        playerBlack.setBoard(this);
-        playerWhite.setIsWhite(true);
-        playerBlack.setIsWhite(false);
-        activePlayer = playerWhite;
         // choose local or online
         if (playerWhite instanceof OnlinePlayer || playerBlack instanceof OnlinePlayer) {
             onlineGame = true;
             Client.localPlaysAsWhite = true;
-            Client.createGame(this);
+            if(!Client.createGame(this)){
+                System.out.println("No Connection");
+                System.exit(0);
+            }
+        }else{
+            setWhite(true);
         }
     }
 
@@ -122,6 +122,7 @@ public class Board extends Group {
         // Drag and Drop
         if (Gdx.input.justTouched()) { // begin drag
             if(onlineGame && Client.illegalMove){
+                System.out.println("ILLEGAL");
                 return;
             }
             float height = tileSize * rowsy;
@@ -266,10 +267,19 @@ public class Board extends Group {
         pieceslist.remove(piece);
     }
     public void setWhite(boolean toWhite) {
-        whiteTurn = toWhite;
+        if(!toWhite){
+            Player zw = playerWhite;
+            this.playerWhite = playerBlack;
+            this.playerBlack = zw;
+        }
+        playerWhite.setBoard(this);
+        playerBlack.setBoard(this);
+        playerWhite.setIsWhite(true);
+        playerBlack.setIsWhite(false);
         if (!toWhite) {
             flipBoard();
         }
+        activePlayer = playerWhite;
     }
 
     public void flipBoard() {
