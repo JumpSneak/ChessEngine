@@ -52,7 +52,8 @@ public class Client {
         try {
             // old
             var response = makeRequest("", Endpoints.create);
-            System.out.println(response.body());
+            System.out.println(response);
+            if(response.statusCode() != 200) return false;
             JsonValue j = new JsonReader().parse(response.body());
             gameid = j.getInt("gameId");
             board.setWhite(j.getBoolean("isWhitePlayer"));

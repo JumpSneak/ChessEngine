@@ -31,10 +31,10 @@ public class ClientSocket extends WebSocketClient {
     public void onMessage(String message) {
         System.out.println("received message: " + message);
         JsonValue json = new JsonReader().parse(message);
-        if(json.getString("eventKey").equals("move")) {
+        if(json.getString("eventKey").equals("PIECE_PLAYED")) {
             Client.setBufferedInput(new MoveInformation(
                     json.getInt("oldX"), json.getInt("oldY"),
-                    json.getInt("newX"), json.getInt("newY")));
+                    json.getInt("x"), json.getInt("y")));
         }
     }
 
