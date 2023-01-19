@@ -1,5 +1,7 @@
 package de.chessy.game;
 
+import de.chessy.user.User;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +26,8 @@ public class GameRepository {
 
     private final List<Game> games;
 
-    public Game create() {
-        Game game = new Game(currentId++, 1, new Board(generateInitialField()));
+    public Game create(User creator) {
+        Game game = new Game(currentId++, creator, null, new Board(generateInitialField()));
         games.add(game);
         return game;
     }
@@ -42,7 +44,7 @@ public class GameRepository {
         }
     }
 
-    public Optional<Move> makeMove(Game game, int x, int y, int oldX, int oldY, boolean isWhitePlayer) {
+    public Optional<Move> makeMove(Game game, int x, int y, int oldX, int oldY, User player) {
         try {
             var move = new Move(x, y, oldX, oldY);
             var board = game.board();
@@ -51,7 +53,7 @@ public class GameRepository {
                 return Optional.empty();
             }
             var pieceName = getPieceName(game, oldX, oldY);
-            board.fields()[x][y] = new Piece(pieceName.get(), isWhitePlayer);
+            board.fields()[x][y] = new Piece(pieceName.get(), player.id() == game.white().id());
             board.fields()[oldX][oldY] = null;
             return Optional.of(move);
         } catch (Exception e) {

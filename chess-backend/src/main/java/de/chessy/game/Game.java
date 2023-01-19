@@ -1,5 +1,7 @@
 package de.chessy.game;
 
-public record Game(int id, int playerCount, Board board) {
+import de.chessy.user.User;
+
+public record Game(int id, User white, User black, Board board) {
 
 }

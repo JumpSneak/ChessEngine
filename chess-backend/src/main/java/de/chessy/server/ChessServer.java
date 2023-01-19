@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 import de.chessy.server.handlers.CreateGameHandler;
 import de.chessy.server.handlers.HelloWorldHandler;
 import de.chessy.server.handlers.PlayPieceHandler;
+import de.chessy.server.handlers.user.MeEndpoint;
 import de.chessy.server.middleware.*;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class ChessServer {
                 new PlayPieceHandler(),
                 new ClosingMiddleware(),
                 new LoggingMiddleware(),
-                new IsWhitePlayerValidatorMiddleware(),
+                new UserAuthenticationMiddleware(),
                 new GameIdValidatorMiddleware()
         ));
         server.createContext("/", new MiddlewareApplier(
@@ -31,7 +32,14 @@ public class ChessServer {
         server.createContext("/game/create", new MiddlewareApplier(
                 new CreateGameHandler(),
                 new ClosingMiddleware(),
-                new LoggingMiddleware()
+                new LoggingMiddleware(),
+                new UserAuthenticationMiddleware()
+        ));
+        server.createContext("/user/me", new MiddlewareApplier(
+                new MeEndpoint(),
+                new ClosingMiddleware(),
+                new LoggingMiddleware(),
+                new UserAuthenticationMiddleware()
         ));
         server.setExecutor(null);
     }
