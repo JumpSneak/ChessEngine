@@ -89,6 +89,9 @@ public class Client {
         bufferedInput = null;
         return result;
     }
+    public static void setBufferedInput(MoveInformation input){
+        bufferedInput = input;
+    }
 }
 
 //    public static HttpRequest getRequest(MoveInformation moveInformation){
