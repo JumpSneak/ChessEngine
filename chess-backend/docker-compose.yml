@@ -7,6 +7,9 @@ services:
     restart: always
     networks:
       - caddy
+    ports:
+    - "8000:8000"
+    - "7999:7999"
     labels:
       caddy_0: api.chess.julianhartl.dev
       caddy_0.reverse_proxy: "{{upstreams 7999}}"
