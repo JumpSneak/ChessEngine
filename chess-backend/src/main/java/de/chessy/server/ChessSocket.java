@@ -7,7 +7,7 @@ import org.java_websocket.server.WebSocketServer;
 import java.net.InetSocketAddress;
 
 public class ChessSocket extends WebSocketServer {
-    private static final int port = 7999;
+    private static final int port = 8000;
 
     public ChessSocket() {
         super(new InetSocketAddress("localhost", port));
@@ -20,13 +20,19 @@ public class ChessSocket extends WebSocketServer {
     }
 
     @Override
+    public void run() {
+        System.out.println("Socket started on port " + port);
+        super.run();
+    }
+
+    @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
 
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-
+        System.out.println("Received message: " + message);
     }
 
     @Override
