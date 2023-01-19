@@ -15,6 +15,7 @@ import com.jumpsneak.chessengine.players.LocalPlayer;
 import com.jumpsneak.chessengine.players.OnlinePlayer;
 import com.jumpsneak.chessengine.players.Player;
 import com.jumpsneak.chessengine.transfer.Client;
+import com.jumpsneak.chessengine.transfer.MoveInformation;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -30,6 +31,7 @@ public class Board extends Group {
     Piece activePiece = null;
     boolean whiteTurn = true;
     boolean onlineGame = false;
+    MoveInformation lastMove = null;
     // Attributes
     float originx = 80;
     float originy = 80;
@@ -158,13 +160,15 @@ public class Board extends Group {
         boolean successful = false;
         if (piece.isWhite == whiteTurn // players turn
                 && (otherPiece == null || otherPiece.isWhite != piece.isWhite) // can be placed
-                && piece.isLegalMove(toTilex, toTiley)) { // legal piece move
+                && piece.isLegalMove(toTilex, toTiley)
+                && !isChecked(piece.tilex, piece.tiley, toTilex, toTiley)) { // legal piece move
             if (otherPiece != null && otherPiece.isWhite != piece.isWhite) {
                 removePiece(otherPiece);
             }
             if (onlineGame) {
                 Client.sendMove(piece, toTilex, toTiley);
             }
+            lastMove = new MoveInformation(piece.tilex, piece.tiley, toTilex, toTiley);
             setPieceOn(null, piece.tilex, piece.tiley);
             piece.tilex = toTilex;
             piece.tiley = toTiley;
@@ -172,12 +176,10 @@ public class Board extends Group {
             if(piece.name.equals("Pawn")){
                 // Pawn to Queen conversion
                 if(piece.isWhite && piece.tiley == 7 || !piece.isWhite && piece.tiley == 0){
-                    System.out.println("oooohoo" + piece.tilex + piece.tiley);
                     Piece q = new Queen(this, piece.tilex, piece.tiley, piece.isWhite);
                     removePiece(piece);
                     setPieceOn(q, q.tilex, q.tiley);
                     pieceslist.add(q);
-
                 }
             }
 //            if(piece instanceof Pawn){
@@ -221,7 +223,10 @@ public class Board extends Group {
         boardPieces[x][y] = piece;
         return true;
     }
-
+    public boolean isChecked(int oldx, int oldy, int newx, int newy){
+                                                                                //TODO
+        return false;
+    }
     public void initPieces() {
         for (int i = 0; i < 8; i++) {
             pieceslist.add(new Pawn(this, i, 1, true));
@@ -255,7 +260,9 @@ public class Board extends Group {
         }
     }
     public void removePiece(Piece piece){
-        setPieceOn(null, piece.tilex, piece.tiley);
+        if(getPieceOn(piece.tilex, piece.tiley) == piece) {
+            setPieceOn(null, piece.tilex, piece.tiley);
+        }
         pieceslist.remove(piece);
     }
     public void setWhite(boolean toWhite) {
