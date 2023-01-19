@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 
-public abstract class Piece{
+public abstract class Piece {
     Board board;
     String name;
     int tilex, tiley;
@@ -34,29 +34,34 @@ public abstract class Piece{
         textureRegion.setRegion(textureId * mainTexture.getWidth() / 6, isWhite ? 0 : mainTexture.getHeight() / 2 + 1,
                 mainTexture.getWidth() / 6, mainTexture.getHeight() / 2);
     }
+
     public abstract boolean isLegalPosition(int newTilePosX, int newTilePosY);
+
     public abstract boolean isLegalMotion(int newTilePosX, int newTilePosY);
-    public boolean isLegalMove(int newTilePosX, int newTilePosY){
-        if(newTilePosX < 0 || newTilePosX >= board.colsx || newTilePosY < 0 || newTilePosY>= board.rowsy){
+
+    public boolean isLegalMove(int newTilePosX, int newTilePosY) {
+        if (newTilePosX < 0 || newTilePosX >= board.colsx || newTilePosY < 0 || newTilePosY >= board.rowsy
+                || (tilex == newTilePosX && tiley == newTilePosY)) {
             return false;
         }
         Piece targetPiece = getPieceOn(newTilePosX, newTilePosY);
         boolean targetTilePlacable = (targetPiece == null || targetPiece.isWhite != this.isWhite);
         return targetTilePlacable && isLegalPosition(newTilePosX, newTilePosY) && isLegalMotion(newTilePosX, newTilePosY);
     }
-    public Piece getPieceOn(int x, int y){
+
+    public Piece getPieceOn(int x, int y) {
         return board.getPieceOn(x, y);
     }
-
-
 
 
     public int getTilex() {
         return tilex;
     }
+
     public int getTiley() {
         return tiley;
     }
+
     public boolean getisWhite() {
         return isWhite;
     }
@@ -64,6 +69,7 @@ public abstract class Piece{
     public void setTilex(int tilex) {
         this.tilex = tilex;
     }
+
     public void setTiley(int tiley) {
         this.tiley = tiley;
     }

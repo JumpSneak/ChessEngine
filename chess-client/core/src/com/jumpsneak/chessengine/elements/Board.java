@@ -15,6 +15,7 @@ import com.jumpsneak.chessengine.players.LocalPlayer;
 import com.jumpsneak.chessengine.players.OnlinePlayer;
 import com.jumpsneak.chessengine.players.Player;
 import com.jumpsneak.chessengine.transfer.Client;
+import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.awt.event.MouseEvent;
@@ -80,13 +81,23 @@ public class Board extends Group {
             batch.draw(pieceslist.get(i).textureRegion, pieceslist.get(i).posx, pieceslist.get(i).posy, tileSize, tileSize);
         }
         // draw possible moves
+        float radius = tileSize / 6;
         if (activePiece != null) {
             for (int y = 0; y < rowsy; y++) {
                 for (int x = 0; x < colsx; x++) {
                     if (activePiece.isLegalMove(x, y)) {
-                        shaper.filledCircle(x * tileSize + originx + tileSize / 2,
-                                y * tileSize + originy + tileSize / 2,
-                                tileSize / 8, new Color(0x99999988));
+                        if(getPieceOn(x, y) == null) {
+                            shaper.filledCircle(invertTileAccordingly(x, true) * tileSize + originx + tileSize / 2,
+                                    invertTileAccordingly(y, false) * tileSize + originy + tileSize / 2,
+                                    radius, new Color(0x33333322));
+                        }else{
+                            shaper.setColor(new Color(0x33333322));
+                            shaper.circle(invertTileAccordingly(x, true) * tileSize + originx + tileSize / 2,
+                                    invertTileAccordingly(y, false) * tileSize + originy + tileSize / 2,
+                                    tileSize/2-5, //new Color(0x33333322),
+                                    10,
+                                    JoinType.SMOOTH);
+                        }
                     }
                 }
             }
