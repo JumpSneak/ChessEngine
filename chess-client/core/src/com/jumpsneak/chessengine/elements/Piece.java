@@ -21,8 +21,8 @@ public abstract class Piece {
     public Piece(Board board, final String name, int tilex, int tiley, final boolean isWhite, int value, int textureId) {
         this.board = board;
         this.name = name;
-        this.tilex = tilex;
-        this.tiley = tiley;
+        this.tilex = invertedTileAccordingly(tilex, true);
+        this.tiley = invertedTileAccordingly(tiley, false);
         this.posx = board.originx + tilex * board.tileSize;
         this.posy = board.originy + tiley * board.tileSize;
         this.isWhite = isWhite;
@@ -55,7 +55,9 @@ public abstract class Piece {
     public boolean setPieceOn(Piece piece, int x, int y){
         return board.setPieceOn(piece, x, y);
     }
-
+    public int invertedTileAccordingly(int a, boolean isX){
+        return board.invertTileAccordingly(a, isX);
+    }
     public int getTilex() {
         return tilex;
     }
