@@ -21,12 +21,13 @@ public class Pawn extends Piece {
 
     @Override
     public boolean isLegalMotion(int newTilePosX, int newTilePosY) {
+        untouched = tiley == 1 && isWhite || tiley == 6 && !isWhite;
         int move = newTilePosY - tiley;
         if (!isWhite) {
             move *= -1;
         }
         if (untouched) {
-//            untouched = tiley == 1 && isWhite || tiley == 6 && !isWhite;
+            untouched = false;
             return move == 2 && getPieceOn(tilex, isWhite ? tiley + 1 : tiley - 1) == null || move == 1;
         }
         return move == 1;

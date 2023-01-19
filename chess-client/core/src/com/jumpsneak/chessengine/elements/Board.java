@@ -169,15 +169,25 @@ public class Board extends Group {
             piece.tilex = toTilex;
             piece.tiley = toTiley;
             setPieceOn(piece, piece.tilex, piece.tiley);
-            if(piece instanceof Pawn){
-                if(((Pawn) piece).isUntouched()) {
-                    ((Pawn) piece).setUntouchedFalse();
+            if(piece.name.equals("Pawn")){
+                // Pawn to Queen conversion
+                if(piece.isWhite && piece.tiley == 7 || !piece.isWhite && piece.tiley == 0){
+                    System.out.println("oooohoo" + piece.tilex + piece.tiley);
+                    Piece q = new Queen(this, piece.tilex, piece.tiley, piece.isWhite);
+                    removePiece(piece);
+                    setPieceOn(q, q.tilex, q.tiley);
+                    pieceslist.add(q);
+
                 }
+            }
+//            if(piece instanceof Pawn){
+//                if(((Pawn) piece).isUntouched()) {
+//                    ((Pawn) piece).setUntouchedFalse(); // untouched determined differently now
 //                    ((Pawn) activePiece).setEnPassantPossible(true); // ENPASSANT TODO
 //                }else if(((Pawn) activePiece).isEnPassantPossible()){
 //                    ((Pawn) activePiece).setEnPassantPossible(false);
 //                }
-            }
+//            }
             System.out.println(activePlayer.toString()+cordsToString(piece, toTilex, toTiley));
             successful = true;
             whiteTurn = !whiteTurn;
@@ -245,7 +255,7 @@ public class Board extends Group {
         }
     }
     public void removePiece(Piece piece){
-        setPieceOn(piece, piece.tilex, piece.tiley);
+        setPieceOn(null, piece.tilex, piece.tiley);
         pieceslist.remove(piece);
     }
     public void setWhite(boolean toWhite) {

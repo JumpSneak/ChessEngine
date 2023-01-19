@@ -52,7 +52,9 @@ public abstract class Piece {
     public Piece getPieceOn(int x, int y) {
         return board.getPieceOn(x, y);
     }
-
+    public boolean setPieceOn(Piece piece, int x, int y){
+        return board.setPieceOn(piece, x, y);
+    }
 
     public int getTilex() {
         return tilex;
