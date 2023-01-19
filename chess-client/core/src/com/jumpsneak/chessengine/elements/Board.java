@@ -38,6 +38,7 @@ public class Board extends Group {
     float rowsy = 8;
     boolean boardFlipped = false;
     List<Piece> pieceslist = new ArrayList<>();
+    Piece[][] boardPieces = new Piece[(int)colsx][(int)rowsy];
 
     public Board(Player playerWhite, Player playerBlack) {
         this.playerWhite = playerWhite;
@@ -97,7 +98,7 @@ public class Board extends Group {
                             shaper.setColor(new Color(0x33333322));
                             shaper.circle(invertTileAccordingly(x, true) * tileSize + originx + tileSize / 2,
                                     invertTileAccordingly(y, false) * tileSize + originy + tileSize / 2,
-                                    tileSize/2-5, //new Color(0x33333322),
+                                    tileSize/2-5,
                                     10,
                                     JoinType.SMOOTH);
                         }
@@ -117,15 +118,16 @@ public class Board extends Group {
             float height = tileSize * rowsy;
             int xtile = invertTileAccordingly(getMouseTileX(), true);
             int ytile = invertTileAccordingly(getMouseTileY(), false);
-
-            for (Piece p : pieceslist) {
-                if (p.tilex == xtile && p.tiley == ytile) {
-                    activePiece = p;
-                    pieceslist.remove(p);
-                    pieceslist.add(p);
-                    return;
-                }
-            }
+            activePiece = getPieceOn(xtile, ytile);
+            // old method
+//            for (Piece p : pieceslist) {
+//                if (p.tilex == xtile && p.tiley == ytile) {
+//                    activePiece = p;
+//                    pieceslist.remove(p);
+//                    pieceslist.add(p);
+//                    return;
+//                }
+//            }
         } else if (activePiece != null && !Gdx.input.isTouched()) { // drop
             int xtile = invertTileAccordingly(getMouseTileX(), true);
             int ytile = invertTileAccordingly(getMouseTileY(), false);
@@ -145,25 +147,28 @@ public class Board extends Group {
         if (piece == null) {
             return false;
         }
-        Piece otherPiece = null;
-        for (Piece p : pieceslist) {
-            if (p.tilex == toTilex && p.tiley == toTiley) {
-                otherPiece = p;
-                break;
-            }
-        }
+        Piece otherPiece = getPieceOn(toTilex, toTiley);
+        // old method
+//        for (Piece p : pieceslist) {
+//            if (p.tilex == toTilex && p.tiley == toTiley) {
+//                otherPiece = p;
+//                break;
+//            }
+//        }
         boolean successful = false;
         if (piece.isWhite == whiteTurn // players turn
                 && (otherPiece == null || otherPiece.isWhite != piece.isWhite) // can be placed
                 && piece.isLegalMove(toTilex, toTiley)) { // legal piece move
             if (otherPiece != null && otherPiece.isWhite != piece.isWhite) {
-                pieceslist.remove(otherPiece);
+                removePiece(otherPiece);
             }
             if (onlineGame) {
                 Client.sendMove(piece, toTilex, toTiley);
             }
+            setPieceOn(null, piece.tilex, piece.tiley);
             piece.tilex = toTilex;
             piece.tiley = toTiley;
+            setPieceOn(piece, piece.tilex, piece.tiley);
             whiteTurn = !whiteTurn;
             if (activePlayer == playerWhite) {
                 activePlayer = playerBlack;
@@ -187,12 +192,24 @@ public class Board extends Group {
     }
 
     public Piece getPieceOn(int x, int y) {
-        for (Piece p : pieceslist) {
-            if (p.tilex == x && p.tiley == y) {
-                return p;
-            }
+        if(x < 0 || x >= colsx || y <0 || y>=rowsy){
+            return null;
         }
-        return null;
+        return boardPieces[x][y];
+        // old method
+//        for (Piece p : pieceslist) {
+//            if (p.tilex == x && p.tiley == y) {
+//                return p;
+//            }
+//        }
+//        return null;
+    }
+    public boolean setPieceOn(Piece piece, int x, int y){
+        if(x < 0 || x >= colsx || y <0 || y>=rowsy){
+            return false;
+        }
+        boardPieces[x][y] = piece;
+        return true;
     }
 
     public void initPieces() {
@@ -219,8 +236,18 @@ public class Board extends Group {
         pieceslist.add(new Bishop(this, 5, 7, false));
         pieceslist.add(new Queen(this, 3, 7, false));
         pieceslist.add(new King(this, 4, 7, false));
-    }
 
+        // init boardPieces
+        for(Piece p: pieceslist){
+            if(p != null){
+                boardPieces[p.tilex][p.tiley] = p;
+            }
+        }
+    }
+    public void removePiece(Piece piece){
+        setPieceOn(piece, piece.tilex, piece.tiley);
+        pieceslist.remove(piece);
+    }
     public void setWhite(boolean toWhite) {
         whiteTurn = toWhite;
         if (!toWhite) {
