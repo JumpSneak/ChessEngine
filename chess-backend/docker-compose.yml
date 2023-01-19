@@ -4,14 +4,17 @@ services:
   chess-backend:
     build: .
     container_name: chess-backend
-    ports:
-      - "7999:7999"
     restart: always
     networks:
       - caddy
     labels:
       caddy: chess.julianhartl.dev
       caddy.reverse_proxy: "{{upstreams 7999}}"
+      # proxy all websocket requests to port 8000
+      caddy.@ws.1_header: Connection *Upgrade*
+      caddy.@ws.2_header: Upgrade websocket
+      caddy.@ws.reverse_proxy: "{{upstreams 8000}}"
+
     depends_on:
       - chess-db
   chess-db:
@@ -25,7 +28,7 @@ services:
     networks:
       - caddy
 volumes:
-    chess_db:
+  chess_db:
 networks:
   caddy:
     external: true
