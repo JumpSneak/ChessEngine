@@ -10,9 +10,7 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 import java.net.InetSocketAddress;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ChessSocket extends WebSocketServer {
@@ -34,8 +32,6 @@ public class ChessSocket extends WebSocketServer {
 
     private static final String GAME_ID_KEY = "gameid";
     private static final String USER_ID_KEY = "userid";
-
-    private final Map<Integer, WebSocket> connections = new HashMap<>();
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
@@ -59,8 +55,9 @@ public class ChessSocket extends WebSocketServer {
             conn.close(-1, "User not found");
             return;
         }
+        conn.setAttachment(user.id());
+        System.out.println("User " + user.id() + " connected to game " + gameId);
         conn.send("Welcome to game " + gameId + ", user " + userId);
-        connections.put(userId, conn);
     }
 
     public void emitEvent(Event event, List<Integer> userIds) {
@@ -68,9 +65,15 @@ public class ChessSocket extends WebSocketServer {
         if (userIds.isEmpty()) {
             broadcast(serialized);
         } else {
-            List<WebSocket> userConnections = userIds.stream().map(connections::get).collect(Collectors.toList());
+            List<WebSocket> userConnections = getUserConnections(userIds);
             broadcast(serialized, userConnections);
         }
+    }
+
+    private List<WebSocket> getUserConnections(List<Integer> userIds) {
+        return getConnections().stream()
+                .filter(conn -> userIds.contains((Integer) conn.getAttachment()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -81,7 +84,8 @@ public class ChessSocket extends WebSocketServer {
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-
+        int userId = conn.getAttachment();
+        System.out.println("User " + userId + " disconnected");
     }
 
     @Override
@@ -91,7 +95,7 @@ public class ChessSocket extends WebSocketServer {
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
-
+        ex.printStackTrace();
     }
 
     @Override
