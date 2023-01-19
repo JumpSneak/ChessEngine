@@ -9,9 +9,10 @@ services:
       - caddy
     labels:
       caddy: chess.julianhartl.dev
-      caddy.0_reverse_proxy: "/websockets* {{upstreams 8000}}"
-      caddy.1_reverse_proxy: "/api* {{upstreams 7999}}"
-
+      caddy.websockets: "/websocket/*"
+      caddy.websockets.0_reverse_proxy: "{{upstreams 8000}}"
+      caddy.api: "/api/*"
+      caddy.api.0_reverse_proxy: "{{upstreams 7999}}"
 
     depends_on:
       - chess-db
