@@ -6,6 +6,7 @@ import de.chessy.user.User;
 import de.chessy.user.UserRepository;
 import de.chessy.utils.Serializer;
 import org.java_websocket.WebSocket;
+import org.java_websocket.framing.CloseFrame;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
@@ -35,29 +36,39 @@ public class ChessSocket extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        if (!handshake.hasFieldValue(GAME_ID_KEY)) {
-            conn.close(-1, GAME_ID_KEY + " is missing");
-            return;
+        try {
+            System.out.println("New connection from " + conn.getRemoteSocketAddress().getHostName());
+            if (!handshake.hasFieldValue(GAME_ID_KEY)) {
+                conn.close(CloseFrame.REFUSE, GAME_ID_KEY + " is missing");
+                return;
+            }
+            if (!handshake.hasFieldValue(USER_ID_KEY)) {
+                conn.close(CloseFrame.REFUSE, USER_ID_KEY + " is missing");
+                return;
+            }
+            int userId = Integer.parseInt(handshake.getFieldValue(USER_ID_KEY));
+            int gameId = Integer.parseInt(handshake.getFieldValue(GAME_ID_KEY));
+            var game = GameRepository.getInstance().get(gameId);
+            if (game.isEmpty()) {
+                conn.close(CloseFrame.REFUSE, "Game not found");
+                return;
+            }
+            User user = UserRepository.getInstance().findUserById(userId);
+            if (user == null) {
+                conn.close(CloseFrame.REFUSE, "User not found");
+                return;
+            }
+            if (!game.get().hasPlayer(userId)) {
+                conn.close(CloseFrame.REFUSE, "User is not part of this game");
+                return;
+            }
+            conn.setAttachment(user.id());
+            System.out.println("User " + user.id() + " connected to game " + gameId);
+            conn.send("Welcome to game " + gameId + ", user " + userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            conn.close(CloseFrame.ABNORMAL_CLOSE, "Internal server error");
         }
-        if (!handshake.hasFieldValue(USER_ID_KEY)) {
-            conn.close(-1, USER_ID_KEY + " is missing");
-            return;
-        }
-        int userId = Integer.parseInt(handshake.getFieldValue(USER_ID_KEY));
-        int gameId = Integer.parseInt(handshake.getFieldValue(GAME_ID_KEY));
-        var game = GameRepository.getInstance().get(gameId);
-        if (game.isEmpty()) {
-            conn.close(-1, "Game not found");
-            return;
-        }
-        User user = UserRepository.getInstance().findUserById(userId);
-        if (user == null) {
-            conn.close(-1, "User not found");
-            return;
-        }
-        conn.setAttachment(user.id());
-        System.out.println("User " + user.id() + " connected to game " + gameId);
-        conn.send("Welcome to game " + gameId + ", user " + userId);
     }
 
     public void emitEvent(Event event, List<Integer> userIds) {
@@ -84,8 +95,10 @@ public class ChessSocket extends WebSocketServer {
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        int userId = conn.getAttachment();
-        System.out.println("User " + userId + " disconnected");
+        Integer userId = conn.getAttachment();
+        if (userId != null) {
+            System.out.println("User " + userId + " disconnected");
+        }
     }
 
     @Override

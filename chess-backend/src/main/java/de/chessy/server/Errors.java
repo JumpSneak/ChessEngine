@@ -1,5 +1,6 @@
 package de.chessy.server;
 
+import de.chessy.game.GameStatus;
 import de.chessy.server.responses.ErrorResponse;
 
 public class Errors {
@@ -32,5 +33,9 @@ public class Errors {
 
     public static ErrorResponse invalidParameter(String userId) {
         return new ErrorResponse("Invalid parameter", 2, "The parameter " + userId + " is invalid");
+    }
+
+    public static ErrorResponse gameStatusNotMatching(GameStatus requiredStatus, GameStatus status) {
+        return new ErrorResponse("Game status not matching", 2, "The game status " + status + " is not matching the required status " + requiredStatus);
     }
 }

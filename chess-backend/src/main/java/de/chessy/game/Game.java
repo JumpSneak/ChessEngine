@@ -14,7 +14,7 @@ public class Game {
         this.board = board;
     }
 
-    public int getOtherPlayer(int userId) {
+    public Integer getOtherPlayer(int userId) {
         if (userId == white) {
             return black;
         } else if (userId == black) {
@@ -26,5 +26,30 @@ public class Game {
 
     public boolean isWhite(int id) {
         return white == id;
+    }
+
+    public boolean hasWhite() {
+        return white != null;
+    }
+
+    public boolean hasBlack() {
+        return black != null;
+    }
+
+    public boolean hasPlayer(int id) {
+        if (hasBlack()) {
+            return black == id;
+        }
+        if (hasWhite()) {
+            return white == id;
+        }
+        return false;
+    }
+
+    public GameStatus getStatus() {
+        if (white == null || black == null) {
+            return GameStatus.CREATED;
+        }
+        return GameStatus.STARTED;
     }
 }

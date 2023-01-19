@@ -48,7 +48,13 @@ public class HttpEndpointWrapper implements HttpHandler {
             if (index < middlewares.size()) {
                 var middleware = middlewares.get(index);
                 index++;
-                middleware.handle(request, response, this);
+                try {
+                    middleware.handle(request, response, this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    response.setStatusCode(500);
+                    response.send(Errors.INTERNAL_SERVER_ERROR);
+                }
             }
         }
     }

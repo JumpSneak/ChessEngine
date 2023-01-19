@@ -30,7 +30,8 @@ public class PlayPieceHandler extends HttpEndpoint {
             return;
         }
         PieceWasPlayedEvent event = new PieceWasPlayedEvent(moveDto.oldX(), moveDto.oldY(), moveDto.x(), moveDto.y());
-        ChessSocket.getInstance().emitEvent(event, List.of(game.getOtherPlayer(user.id())));
+        Integer receiver = game.getOtherPlayer(user.id());
+        ChessSocket.getInstance().emitEvent(event, List.of(receiver));
         PlayPieceResponse playPieceResponse = new PlayPieceResponse(moveDto.x(), moveDto.y());
         response.send(playPieceResponse);
     }
