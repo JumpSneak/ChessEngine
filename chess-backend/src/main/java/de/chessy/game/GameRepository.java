@@ -98,6 +98,9 @@ public class GameRepository {
             return null;
         }
         Game game = gameOptional.get();
+        if (game.hasPlayer(userId)) {
+            return game;
+        }
         if (game.black == null) {
             game.black = userId;
         } else if (game.white == null) {
