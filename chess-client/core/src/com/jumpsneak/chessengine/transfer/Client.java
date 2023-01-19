@@ -55,7 +55,7 @@ public class Client {
 
     public static boolean createGame(Board board) {
         try {
-            // old
+            playerid = 0;
             var response = makeRequest("", Endpoints.create);
             System.out.println(response);
             if (response.statusCode() != 200) return false;
@@ -77,6 +77,7 @@ public class Client {
     }
     public static boolean joinGame(Board board) {
         try {
+            playerid = 1;
             var response = makeRequest(new JoinGameRequest(gameid), Endpoints.join);
             System.out.println(response);
             System.out.println(response.body());
