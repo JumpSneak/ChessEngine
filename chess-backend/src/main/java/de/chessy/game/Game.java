@@ -3,6 +3,7 @@ package de.chessy.game;
 import de.chessy.game.pieces.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Game {
@@ -124,7 +125,7 @@ public class Game {
     }
 
     public boolean isWhite(int id) {
-        return  white == id;
+        return white == id;
     }
 
     public boolean hasWhite() {
@@ -136,15 +137,10 @@ public class Game {
     }
 
     public boolean hasPlayer(int id) {
-        if (hasBlack()) {
-            var isBlack = black == id;
-            if (isBlack) {
-                return true;
-            }
-        }
-        if (hasWhite()) {
-            return white == id;
-        }
-        return false;
+        return getPlayers().contains(id);
+    }
+
+    public List<Integer> getPlayers() {
+        return List.of(white, black);
     }
 }

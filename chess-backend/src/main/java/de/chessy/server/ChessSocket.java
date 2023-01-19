@@ -72,6 +72,7 @@ public class ChessSocket extends WebSocketServer {
         }
     }
 
+
     public void emitEvent(Event event, Integer receiver) {
         emitEvent(event, List.of(receiver));
     }

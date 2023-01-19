@@ -27,9 +27,7 @@ public class PlayPieceHandler extends HttpEndpoint {
             response.send(Errors.invalidMove(moveDto.x(), moveDto.y()));
             return;
         }
-        PieceWasPlayedEvent event = new PieceWasPlayedEvent(moveDto.oldX(), moveDto.oldY(), moveDto.x(), moveDto.y());
-        Integer receiver = game.getOtherPlayer(user.id());
-        ChessSocket.getInstance().emitEvent(event, receiver);
+
         PlayPieceResponse playPieceResponse = new PlayPieceResponse(moveDto.x(), moveDto.y());
         response.send(playPieceResponse);
     }

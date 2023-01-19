@@ -31,7 +31,8 @@ public class JoinGameEndpoint extends HttpEndpoint {
             return;
         }
         var receiver = joinedGame.getOtherPlayer(user.id());
-        ChessSocket.getInstance().emitEvent(new UserJoinedGameEvent(joinedGame.id, user.id()), receiver);
-        response.send(new JoinGameResponse(joinedGame.id, joinedGame.isWhite(user.id())));
+        boolean isWhitePlayer = joinedGame.isWhite(user.id());
+        ChessSocket.getInstance().emitEvent(new UserJoinedGameEvent(joinedGame.id, user.id(), isWhitePlayer), receiver);
+        response.send(new JoinGameResponse(joinedGame.id, isWhitePlayer));
     }
 }

@@ -1,5 +1,9 @@
 package de.chessy.game;
 
+import de.chessy.server.ChessSocket;
+import de.chessy.server.events.GameStatusChangedEvent;
+import de.chessy.server.events.PieceWasPlayedEvent;
+import de.chessy.server.events.UserJoinedGameEvent;
 import de.chessy.user.User;
 
 import java.util.ArrayList;
@@ -13,6 +17,8 @@ public class GameRepository {
     private static int currentId = 0;
 
     private static GameRepository instance;
+
+    private final ChessSocket chessSocket = ChessSocket.getInstance();
 
     public static GameRepository getInstance() {
         if (instance == null) {
@@ -37,6 +43,7 @@ public class GameRepository {
     public Optional<Game> get(int id) {
         return games.stream().filter(game -> game.id == id).findFirst();
     }
+
     public Optional<Move> makeMove(Game game, int x, int y, int oldX, int oldY, User player) {
         try {
             var move = new Move(x, y, oldX, oldY);
@@ -47,6 +54,9 @@ public class GameRepository {
             }
             board[x][y] = board[oldX][oldY];
             board[oldX][oldY] = EMPTY_FIELD;
+            PieceWasPlayedEvent event = new PieceWasPlayedEvent(oldX, oldY, x, y);
+            Integer receiver = game.getOtherPlayer(player.id());
+            ChessSocket.getInstance().emitEvent(event, receiver);
             return Optional.of(move);
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,7 +73,8 @@ public class GameRepository {
         }
         Game game = gameOptional.get();
         if (game.hasPlayer(userId)) {
-            return game;
+            System.out.println("Game could not be joined: User already in game.");
+            return null;
         }
         if (game.black == null) {
             game.black = userId;
@@ -73,6 +84,20 @@ public class GameRepository {
             System.out.println("Game could not be joined: Game is full.");
             return null;
         }
+        UserJoinedGameEvent event = new UserJoinedGameEvent(gameId, userId, game.isWhite(userId));
+        chessSocket.emitEvent(event, userId);
         return game;
+    }
+
+    public boolean setStatus(int gameId, GameStatus status) {
+        Optional<Game> gameOptional = get(gameId);
+        if (gameOptional.isEmpty()) {
+            return false;
+        }
+        Game game = gameOptional.get();
+        game.status = status;
+        GameStatusChangedEvent event = new GameStatusChangedEvent(gameId, status);
+        chessSocket.emitEvent(event, game.getPlayers());
+        return true;
     }
 }
