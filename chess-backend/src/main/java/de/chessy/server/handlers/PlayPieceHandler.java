@@ -29,8 +29,7 @@ public class PlayPieceHandler implements HttpHandler {
                 response.send(Errors.invalidMove(moveDto.x(), moveDto.y()));
                 return;
             }
-            var pieceName = gameRepository.getPieceName(game, moveDto.x(), moveDto.y());
-            PlayPieceResponse playPieceResponse = new PlayPieceResponse(moveDto.x(), moveDto.y(), pieceName.get());
+            PlayPieceResponse playPieceResponse = new PlayPieceResponse(moveDto.x(), moveDto.y());
             response.send(playPieceResponse);
         } catch (Exception e) {
             e.printStackTrace();
