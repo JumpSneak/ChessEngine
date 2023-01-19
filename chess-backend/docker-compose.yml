@@ -10,7 +10,7 @@ services:
     labels:
       caddy_0: api.chess.julianhartl.dev
       caddy_0.reverse_proxy: "{{upstreams 7999}}"
-      caddy_1: ws.chess.julianhartl.dev
+      caddy_1: socket.chess.julianhartl.dev
       caddy_1.reverse_proxy: "{{upstreams 8000}}"
     depends_on:
       - chess-db
