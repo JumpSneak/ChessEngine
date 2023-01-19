@@ -31,12 +31,12 @@ public class Serializer {
     }
 
 
-    public static <T> T parse(InputStream body, Class<T> clazz) {
+    public static <T> T parse(InputStream body, Class<T> clazz) throws SerializationException {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(new InputStreamReader(body, StandardCharsets.UTF_8), clazz);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new SerializationException(e.getMessage());
         }
     }
 }

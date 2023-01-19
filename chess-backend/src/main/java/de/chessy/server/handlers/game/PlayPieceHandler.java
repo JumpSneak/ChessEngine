@@ -1,14 +1,18 @@
-package de.chessy.server.handlers;
+package de.chessy.server.handlers.game;
 
 import de.chessy.game.Game;
 import de.chessy.game.GameRepository;
+import de.chessy.server.ChessSocket;
 import de.chessy.server.Errors;
 import de.chessy.server.dtos.ChessMoveDto;
+import de.chessy.server.events.PieceWasPlayedEvent;
 import de.chessy.server.responses.PlayPieceResponse;
 import de.chessy.user.User;
 import de.chessy.utils.HttpEndpoint;
 import de.chessy.utils.HttpRequest;
 import de.chessy.utils.HttpResponse;
+
+import java.util.List;
 
 public class PlayPieceHandler extends HttpEndpoint {
 
@@ -25,6 +29,8 @@ public class PlayPieceHandler extends HttpEndpoint {
             response.send(Errors.invalidMove(moveDto.x(), moveDto.y()));
             return;
         }
+        PieceWasPlayedEvent event = new PieceWasPlayedEvent(moveDto.oldX(), moveDto.oldY(), moveDto.x(), moveDto.y());
+        ChessSocket.getInstance().emitEvent(event, List.of(game.getOtherPlayer(user.id())));
         PlayPieceResponse playPieceResponse = new PlayPieceResponse(moveDto.x(), moveDto.y());
         response.send(playPieceResponse);
     }

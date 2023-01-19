@@ -13,10 +13,15 @@ public class HttpRequest {
     private Object body;
 
     public <T> T getBody(Class<T> type) {
-        if (body == null) {
-            body = Serializer.parse(exchange.getRequestBody(), type);
+        try {
+            if (body == null) {
+                body = Serializer.parse(exchange.getRequestBody(), type);
+            }
+            return (T) body;
+        } catch (SerializationException e) {
+            e.printStackTrace();
+            return null;
         }
-        return (T) body;
     }
 
     public <A> A getAttribute(String name) {

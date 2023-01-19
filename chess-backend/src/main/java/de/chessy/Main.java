@@ -8,9 +8,8 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         try {
-            ChessSocket socket = new ChessSocket();
             ChessServer server = ChessServer.create(7999);
-            socket.start();
+            ChessSocket.getInstance().start();
             server.start();
         } catch (IOException e) {
             e.printStackTrace();

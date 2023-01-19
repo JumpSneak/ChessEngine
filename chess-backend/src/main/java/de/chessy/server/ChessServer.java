@@ -1,11 +1,15 @@
 package de.chessy.server;
 
 import com.sun.net.httpserver.HttpServer;
-import de.chessy.server.handlers.CreateGameHandler;
 import de.chessy.server.handlers.HelloWorldHandler;
-import de.chessy.server.handlers.PlayPieceHandler;
+import de.chessy.server.handlers.game.CreateGameEndpoint;
+import de.chessy.server.handlers.game.JoinGameEndpoint;
+import de.chessy.server.handlers.game.PlayPieceHandler;
 import de.chessy.server.handlers.user.MeEndpoint;
-import de.chessy.server.middleware.*;
+import de.chessy.server.middleware.GameIdValidatorMiddleware;
+import de.chessy.server.middleware.HttpEndpointWrapper;
+import de.chessy.server.middleware.LoggingMiddleware;
+import de.chessy.server.middleware.UserAuthenticationMiddleware;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -17,18 +21,23 @@ public class ChessServer {
     private ChessServer(int port) throws IOException {
         server = HttpServer.create(
                 new InetSocketAddress(port), 0);
+        server.createContext("/", new HttpEndpointWrapper(
+                new HelloWorldHandler(),
+                new LoggingMiddleware()
+        ));
         server.createContext("/game/playPiece", new HttpEndpointWrapper(
                 new PlayPieceHandler(),
                 new LoggingMiddleware(),
                 new UserAuthenticationMiddleware(),
                 new GameIdValidatorMiddleware()
         ));
-        server.createContext("/", new HttpEndpointWrapper(
-                new HelloWorldHandler(),
-                new LoggingMiddleware()
-        ));
         server.createContext("/game/create", new HttpEndpointWrapper(
-                new CreateGameHandler(),
+                new CreateGameEndpoint(),
+                new LoggingMiddleware(),
+                new UserAuthenticationMiddleware()
+        ));
+        server.createContext("/game/join", new HttpEndpointWrapper(
+                new JoinGameEndpoint(),
                 new LoggingMiddleware(),
                 new UserAuthenticationMiddleware()
         ));

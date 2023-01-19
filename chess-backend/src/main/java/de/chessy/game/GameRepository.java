@@ -26,19 +26,19 @@ public class GameRepository {
 
     private final List<Game> games;
 
-    public Game create(User creator) {
+    public Game create(int creator) {
         Game game = new Game(currentId++, creator, null, new Board(generateInitialField()));
         games.add(game);
         return game;
     }
 
     public Optional<Game> get(int id) {
-        return games.stream().filter(game -> game.id() == id).findFirst();
+        return games.stream().filter(game -> game.id == id).findFirst();
     }
 
     public Optional<String> getPieceName(Game game, int x, int y) {
         try {
-            return Optional.of(game.board().fields()[x][y].pieceName());
+            return Optional.of(game.board.fields()[x][y].pieceName());
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -47,7 +47,7 @@ public class GameRepository {
     public Optional<Move> makeMove(Game game, int x, int y, int oldX, int oldY, User player) {
         try {
             var move = new Move(x, y, oldX, oldY);
-            var board = game.board();
+            var board = game.board;
             var isValidMove = MoveValidator.isValidMove(move, board);
             if (!isValidMove) {
                 return Optional.empty();
@@ -56,7 +56,7 @@ public class GameRepository {
             if (pieceName.isEmpty()) {
                 return Optional.empty();
             }
-            board.fields()[x][y] = new Piece(pieceName.get(), player.id() == game.white().id());
+            board.fields()[x][y] = new Piece(pieceName.get(), player.id() == game.white);
             board.fields()[oldX][oldY] = null;
             return Optional.of(move);
         } catch (Exception e) {
@@ -91,4 +91,19 @@ public class GameRepository {
         return field;
     }
 
+    public Game join(int gameId, int userId) {
+        Optional<Game> gameOptional = get(gameId);
+        if (gameOptional.isEmpty()) {
+            return null;
+        }
+        Game game = gameOptional.get();
+        if (game.black == null) {
+            game.black = userId;
+        } else if (game.white == null) {
+            game.white = userId;
+        } else {
+            return null;
+        }
+        return game;
+    }
 }

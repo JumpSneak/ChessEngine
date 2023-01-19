@@ -8,6 +8,9 @@ public class Errors {
     public static final ErrorResponse NOT_FOUND = new ErrorResponse("Not found", 3, "Check if the url is correct");
 
     public static final ErrorResponse INTERNAL_SERVER_ERROR = new ErrorResponse("Internal server error", 4, "Check the server logs");
+    public static final ErrorResponse GAME_NOT_CREATED = new ErrorResponse("Game not created", 5, "Check the server logs");
+    public static final ErrorResponse INVALID_BODY = new ErrorResponse("Invalid body", 6, "Check the body of the request");
+    public static final ErrorResponse GAME_NOT_JOINED = new ErrorResponse("Game not joined", 7, "Check the server logs");
 
     public static ErrorResponse missingParameter(String parameterName) {
         return new ErrorResponse("Missing parameter", 3, "Check if the parameter " + parameterName + " is present");
