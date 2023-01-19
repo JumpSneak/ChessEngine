@@ -17,8 +17,6 @@ import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 public class Client {
-    static String ip_address = "https://api.chess.julianhartl.dev/";//"http://localhost:7999/";//
-    static int port = 7999;
 
     static class Endpoints {
         static public String play = "game/playPiece";
@@ -92,7 +90,7 @@ public class Client {
 
     public static HttpResponse<String> makeRequest(Object o, String path) {
         try {
-            return client.send(HttpRequest.newBuilder(URI.create(ip_address + path))
+            return client.send(HttpRequest.newBuilder(URI.create(Environment.getApiUrl() + path))
                     .header("Content-Type", "application/json")
                     .header("gameId", String.valueOf(gameid))
                     .header("userId", String.valueOf(playerid))

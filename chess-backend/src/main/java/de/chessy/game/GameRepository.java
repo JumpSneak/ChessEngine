@@ -56,7 +56,7 @@ public class GameRepository {
             board[oldX][oldY] = EMPTY_FIELD;
             PieceWasPlayedEvent event = new PieceWasPlayedEvent(oldX, oldY, x, y);
             Integer receiver = game.getOtherPlayer(player.id());
-            ChessSocket.getInstance().emitEvent(event, receiver);
+            chessSocket.emitEvent(event, receiver);
             return Optional.of(move);
         } catch (Exception e) {
             e.printStackTrace();

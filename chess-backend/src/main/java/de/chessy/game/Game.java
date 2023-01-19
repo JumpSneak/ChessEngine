@@ -1,7 +1,10 @@
 package de.chessy.game;
 
+import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.chessy.game.pieces.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,7 +143,15 @@ public class Game {
         return getPlayers().contains(id);
     }
 
+    @JsonIgnore
     public List<Integer> getPlayers() {
-        return List.of(white, black);
+        List<Integer> players = new ArrayList<>(2);
+        if (hasWhite()) {
+            players.add(white);
+        }
+        if (hasBlack()) {
+            players.add(black);
+        }
+        return players;
     }
 }

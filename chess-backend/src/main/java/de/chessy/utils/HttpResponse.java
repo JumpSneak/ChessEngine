@@ -22,12 +22,23 @@ public class HttpResponse {
         this.statusCode = statusCode;
     }
 
+    private boolean isClosed = false;
+
+    private boolean hasSentHeaders = false;
+
     public void send(Object body) {
         try {
-            exchange.getResponseHeaders().set("Content-Type", contentType);
-            exchange.sendResponseHeaders(statusCode, 0);
+            if (!hasSentHeaders) {
+                exchange.getResponseHeaders().set("Content-Type", contentType);
+                exchange.sendResponseHeaders(statusCode, 0);
+            }
+            hasSentHeaders = true;
             OutputStream responseBody = exchange.getResponseBody();
-            responseBody.write(Serializer.serialize(body).getBytes());
+            if (!isClosed) {
+                responseBody.write(Serializer.serialize(body).getBytes());
+                responseBody.close();
+                isClosed = true;
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -36,7 +47,6 @@ public class HttpResponse {
     }
 
     public boolean isClosed() {
-        int responseCode = exchange.getResponseCode();
-        return responseCode != -1;
+        return isClosed;
     }
 }

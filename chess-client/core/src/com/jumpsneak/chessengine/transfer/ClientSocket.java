@@ -1,19 +1,18 @@
 package com.jumpsneak.chessengine.transfer;
+
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft;
-import org.java_websocket.drafts.Draft_6455;
-import org.java_websocket.handshake.ServerHandshake;
-
 public class ClientSocket extends WebSocketClient {
     public ClientSocket(int gameid, int userid) throws URISyntaxException {
-        super(new URI("wss://socket.chess.julianhartl.dev"), Map.of("gameid", String.valueOf(gameid), "userid", String.valueOf(userid)));
+        super(new URI(Environment.getSocketsUrl()), Map.of("gameid", String.valueOf(gameid), "userid", String.valueOf(userid)));
     }
 
     @Override
@@ -31,7 +30,7 @@ public class ClientSocket extends WebSocketClient {
     public void onMessage(String message) {
         System.out.println("received message: " + message);
         JsonValue json = new JsonReader().parse(message);
-        if(json.getString("eventKey").equals("PIECE_PLAYED")) {
+        if (json.getString("eventKey").equals("PIECE_PLAYED")) {
             Client.setBufferedInput(new MoveInformation(
                     json.getInt("oldX"), json.getInt("oldY"),
                     json.getInt("x"), json.getInt("y")));
