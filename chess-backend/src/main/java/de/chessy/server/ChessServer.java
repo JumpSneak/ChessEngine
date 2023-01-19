@@ -2,11 +2,11 @@ package de.chessy.server;
 
 import com.sun.net.httpserver.HttpServer;
 import de.chessy.game.GameStatus;
-import de.chessy.server.handlers.ApiInformationEndpoint;
-import de.chessy.server.handlers.game.CreateGameEndpoint;
-import de.chessy.server.handlers.game.JoinGameEndpoint;
-import de.chessy.server.handlers.game.PlayPieceHandler;
-import de.chessy.server.handlers.user.MeEndpoint;
+import de.chessy.server.endpoints.ApiInformationEndpoint;
+import de.chessy.server.endpoints.game.CreateGameEndpoint;
+import de.chessy.server.endpoints.game.JoinGameEndpoint;
+import de.chessy.server.endpoints.game.PlayPieceHandler;
+import de.chessy.server.endpoints.user.MeEndpoint;
 import de.chessy.server.middleware.*;
 
 import java.io.IOException;

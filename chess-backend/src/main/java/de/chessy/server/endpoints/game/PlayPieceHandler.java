@@ -1,4 +1,4 @@
-package de.chessy.server.handlers.game;
+package de.chessy.server.endpoints.game;
 
 import de.chessy.game.Game;
 import de.chessy.game.GameRepository;
@@ -11,8 +11,6 @@ import de.chessy.user.User;
 import de.chessy.utils.HttpEndpoint;
 import de.chessy.utils.HttpRequest;
 import de.chessy.utils.HttpResponse;
-
-import java.util.List;
 
 public class PlayPieceHandler extends HttpEndpoint {
 

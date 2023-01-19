@@ -1,4 +1,4 @@
-package de.chessy.server.handlers;
+package de.chessy.server.endpoints;
 
 import de.chessy.server.responses.ApiInformation;
 import de.chessy.utils.HttpEndpoint;

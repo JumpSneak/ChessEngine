@@ -1,4 +1,4 @@
-package de.chessy.server.handlers.user;
+package de.chessy.server.endpoints.user;
 
 import de.chessy.user.User;
 import de.chessy.utils.HttpEndpoint;

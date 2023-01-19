@@ -1,4 +1,4 @@
-package de.chessy.server.handlers.game;
+package de.chessy.server.endpoints.game;
 
 import de.chessy.game.Game;
 import de.chessy.game.GameRepository;

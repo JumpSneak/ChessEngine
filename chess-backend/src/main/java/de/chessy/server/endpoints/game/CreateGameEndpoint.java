@@ -1,4 +1,4 @@
-package de.chessy.server.handlers.game;
+package de.chessy.server.endpoints.game;
 
 import de.chessy.game.Game;
 import de.chessy.game.GameRepository;
@@ -17,12 +17,12 @@ public class CreateGameEndpoint extends HttpEndpoint {
     public void onRequest(HttpRequest request, HttpResponse response) {
         User user = request.getAttribute("user");
         Game game = GameRepository.getInstance().create(user.id());
-        if(game == null) {
+        if (game == null) {
             response.setStatusCode(400);
             response.send(Errors.GAME_NOT_CREATED);
             return;
         }
-        CreateGameResponse createGameResponse = new CreateGameResponse(game.id, game.isWhite(user.id()));
+        CreateGameResponse createGameResponse = new CreateGameResponse(game, game.isWhite(user.id()));
         response.send(createGameResponse);
     }
 }
