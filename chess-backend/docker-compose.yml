@@ -13,7 +13,7 @@ services:
     labels:
       caddy: chess.julianhartl.dev
       caddy.sockets: /sockets/*
-      caddy.sockets.0_reverse_proxy: "@ws /sockets* {{upstreams 8000}}"
+      caddy.sockets.0_reverse_proxy: "{{upstreams 8000}}"
       caddy.1_reverse_proxy: "{{upstreams 7999}}"
     depends_on:
       - chess-db
