@@ -65,11 +65,15 @@ public class ChessSocket extends WebSocketServer {
             }
             conn.setAttachment(user.id());
             System.out.println("User " + user.id() + " connected to game " + gameId);
-            emitEvent(new ConnectToGameEvent(gameId), List.of(user.id()));
+            emitEvent(new ConnectToGameEvent(gameId), user.id());
         } catch (Exception e) {
             e.printStackTrace();
             conn.close(CloseFrame.ABNORMAL_CLOSE, "Internal server error");
         }
+    }
+
+    public void emitEvent(Event event, Integer receiver) {
+        emitEvent(event, List.of(receiver));
     }
 
     public void emitEvent(Event event, List<Integer> userIds) {

@@ -12,14 +12,13 @@ import de.chessy.utils.HttpEndpoint;
 import de.chessy.utils.HttpRequest;
 import de.chessy.utils.HttpResponse;
 
-import java.util.List;
-
 public class JoinGameEndpoint extends HttpEndpoint {
     @Override
     public void onRequest(HttpRequest request, HttpResponse response) {
         GameRepository gameRepository = GameRepository.getInstance();
         JoinGameDto joinGameDto = request.getBody(JoinGameDto.class);
         if (joinGameDto == null) {
+            System.out.println("Invalid body: " + request.getRawBody());
             response.setStatusCode(400);
             response.send(Errors.INVALID_BODY);
             return;
@@ -31,8 +30,8 @@ public class JoinGameEndpoint extends HttpEndpoint {
             response.send(Errors.GAME_NOT_JOINED);
             return;
         }
-        List<Integer> receivers = List.of(joinedGame.getOtherPlayer(user.id()));
-        ChessSocket.getInstance().emitEvent(new UserJoinedGameEvent(joinedGame.id, user.id()), receivers);
+        var receiver = joinedGame.getOtherPlayer(user.id());
+        ChessSocket.getInstance().emitEvent(new UserJoinedGameEvent(joinedGame.id, user.id()), receiver);
         response.send(new JoinGameResponse(joinedGame.id, joinedGame.isWhite(user.id())));
     }
 }

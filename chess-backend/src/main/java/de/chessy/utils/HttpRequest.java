@@ -12,6 +12,10 @@ public class HttpRequest {
 
     private Object body;
 
+    public String getRawBody() {
+        return exchange.getRequestBody().toString();
+    }
+
     public <T> T getBody(Class<T> type) {
         try {
             if (body == null) {

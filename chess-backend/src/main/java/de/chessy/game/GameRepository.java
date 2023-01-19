@@ -94,6 +94,7 @@ public class GameRepository {
     public Game join(int gameId, int userId) {
         Optional<Game> gameOptional = get(gameId);
         if (gameOptional.isEmpty()) {
+            System.out.println("Game could not be joined: Not found.");
             return null;
         }
         Game game = gameOptional.get();
@@ -102,6 +103,7 @@ public class GameRepository {
         } else if (game.white == null) {
             game.white = userId;
         } else {
+            System.out.println("Game could not be joined: Game is full.");
             return null;
         }
         return game;
