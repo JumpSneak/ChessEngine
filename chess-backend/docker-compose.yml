@@ -12,7 +12,9 @@ services:
       # proxy all websocket requests to port 8000
       caddy.@ws.1_header: Connection *Upgrade*
       caddy.@ws.2_header: Upgrade websocket
-      caddy.0_reverse_proxy: "@ws /websockets* {{upstreams 8000}}"
+      caddy.@ws.3_path: /websockets
+
+      caddy.0_reverse_proxy: "@ws {{upstreams 8000}}"
       caddy.1_reverse_proxy: "/api* {{upstreams 7999}}"
 
 
