@@ -2,8 +2,8 @@ package de.chessy.game.pieces;
 
 public class KingMetadata extends PieceMetadata {
 
-    public KingMetadata(int id, int belongsTo) {
-        super(id, belongsTo, PieceKind.KING);
+    public KingMetadata(int id, boolean isWhite) {
+        super(id, isWhite, PieceKind.KING);
     }
 
 

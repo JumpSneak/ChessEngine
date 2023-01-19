@@ -49,82 +49,82 @@ public class Game {
 
     private void generateKings() {
         board[4][0] = pieceId;
-        metadata.put(pieceId, new KingMetadata(pieceId, white));
+        metadata.put(pieceId, new KingMetadata(pieceId, true));
         pieceId++;
         board[4][7] = pieceId;
-        metadata.put(pieceId, new KingMetadata(pieceId, black));
+        metadata.put(pieceId, new KingMetadata(pieceId, false));
         pieceId++;
     }
 
     private void generateQueens() {
         board[3][0] = pieceId;
-        metadata.put(pieceId, new QueenMetadata(pieceId, white));
+        metadata.put(pieceId, new QueenMetadata(pieceId, true));
         pieceId++;
         board[3][7] = pieceId;
-        metadata.put(pieceId, new QueenMetadata(pieceId, black));
+        metadata.put(pieceId, new QueenMetadata(pieceId, false));
         pieceId++;
     }
 
     private void generateBishops() {
         board[0][2] = pieceId;
-        metadata.put(pieceId, new BishopMetadata(pieceId, white));
+        metadata.put(pieceId, new BishopMetadata(pieceId, true));
         pieceId++;
         board[0][5] = pieceId;
-        metadata.put(pieceId, new BishopMetadata(pieceId, white));
+        metadata.put(pieceId, new BishopMetadata(pieceId, true));
         pieceId++;
         board[7][2] = pieceId;
-        metadata.put(pieceId, new BishopMetadata(pieceId, black));
+        metadata.put(pieceId, new BishopMetadata(pieceId, false));
         pieceId++;
         board[7][5] = pieceId;
-        metadata.put(pieceId, new BishopMetadata(pieceId, black));
+        metadata.put(pieceId, new BishopMetadata(pieceId, false));
         pieceId++;
     }
 
     private void generateKnights() {
         board[1][0] = pieceId;
-        metadata.put(pieceId, new KnightMetadata(pieceId, white));
+        metadata.put(pieceId, new KnightMetadata(pieceId, true));
         pieceId++;
         board[6][0] = pieceId;
-        metadata.put(pieceId, new KnightMetadata(pieceId, white));
+        metadata.put(pieceId, new KnightMetadata(pieceId, true));
         pieceId++;
         board[1][7] = pieceId;
-        metadata.put(pieceId, new KnightMetadata(pieceId, black));
+        metadata.put(pieceId, new KnightMetadata(pieceId, false));
         pieceId++;
         board[6][7] = pieceId;
-        metadata.put(pieceId, new KnightMetadata(pieceId, black));
+        metadata.put(pieceId, new KnightMetadata(pieceId, false));
         pieceId++;
     }
 
     private void generateRooks() {
         board[0][0] = pieceId;
-        metadata.put(pieceId, new RookMetadata(pieceId, white));
+        metadata.put(pieceId, new RookMetadata(pieceId, true));
         pieceId++;
         board[0][7] = pieceId;
-        metadata.put(pieceId, new RookMetadata(pieceId, white));
+        metadata.put(pieceId, new RookMetadata(pieceId, true));
         pieceId++;
         board[7][0] = pieceId;
-        metadata.put(pieceId, new RookMetadata(pieceId, black));
+        metadata.put(pieceId, new RookMetadata(pieceId, false));
         pieceId++;
         board[7][7] = pieceId;
-        metadata.put(pieceId, new RookMetadata(pieceId, black));
+        metadata.put(pieceId, new RookMetadata(pieceId, false));
         pieceId++;
     }
 
     private void generatePawns() {
         for (int i = 0; i < 8; i++) {
             board[1][i] = pieceId;
-            metadata.put(pieceId, new PawnMetadata(pieceId, white));
+            metadata.put(pieceId, new PawnMetadata(pieceId, true));
             pieceId++;
         }
         for (int i = 0; i < 8; i++) {
             board[6][i] = pieceId;
-            metadata.put(pieceId, new PawnMetadata(pieceId, black));
+            metadata.put(pieceId, new PawnMetadata(pieceId, false));
             pieceId++;
         }
     }
 
     public boolean isWhite(int id) {
-        return white == id;
+        return  white == id;
     }
 
     public boolean hasWhite() {

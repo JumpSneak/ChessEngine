@@ -4,13 +4,13 @@ public abstract class PieceMetadata {
 
     public final int id;
 
-    public final int belongsTo;
+    public final boolean isWhite;
 
     public final PieceKind kind;
 
-    public PieceMetadata(int id, int belongsTo, PieceKind kind) {
+    public PieceMetadata(int id, boolean isWhite, PieceKind kind) {
         this.id = id;
-        this.belongsTo = belongsTo;
+        this.isWhite = isWhite;
         this.kind = kind;
     }
 
