@@ -53,6 +53,9 @@ public class GameRepository {
                 return Optional.empty();
             }
             var pieceName = getPieceName(game, oldX, oldY);
+            if (pieceName.isEmpty()) {
+                return Optional.empty();
+            }
             board.fields()[x][y] = new Piece(pieceName.get(), player.id() == game.white().id());
             board.fields()[oldX][oldY] = null;
             return Optional.of(move);
