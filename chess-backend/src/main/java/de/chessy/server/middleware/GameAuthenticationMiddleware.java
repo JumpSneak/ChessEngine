@@ -14,6 +14,7 @@ public class GameAuthenticationMiddleware implements Middleware{
         if(game.hasPlayer(user.id())) {
             next.next(request, response);
         } else {
+            System.out.println("User " + user.id() + " is not in game " + game.id);
             response.setStatusCode(401);
             response.send(Errors.UNAUTHORIZED);
         }

@@ -38,7 +38,10 @@ public class Game {
 
     public boolean hasPlayer(int id) {
         if (hasBlack()) {
-            return black == id;
+            var isBlack = black == id;
+            if (isBlack) {
+                return true;
+            }
         }
         if (hasWhite()) {
             return white == id;
