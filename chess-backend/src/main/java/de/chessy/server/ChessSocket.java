@@ -1,6 +1,7 @@
 package de.chessy.server;
 
 import de.chessy.game.GameRepository;
+import de.chessy.server.events.ConnectToGameEvent;
 import de.chessy.server.events.Event;
 import de.chessy.user.User;
 import de.chessy.user.UserRepository;
@@ -64,7 +65,7 @@ public class ChessSocket extends WebSocketServer {
             }
             conn.setAttachment(user.id());
             System.out.println("User " + user.id() + " connected to game " + gameId);
-            conn.send("Welcome to game " + gameId + ", user " + userId);
+            emitEvent(new ConnectToGameEvent(gameId), List.of(user.id()));
         } catch (Exception e) {
             e.printStackTrace();
             conn.close(CloseFrame.ABNORMAL_CLOSE, "Internal server error");
