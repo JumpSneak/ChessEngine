@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'maven-publish'
+
 }
 
 group 'de.chessy'
@@ -17,4 +19,23 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+
+publishing {
+    repositories {
+        maven {
+            credentials {
+                password = project.findProperty("gpr.user") ?: "julian-hartl"
+                username = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/JumpSneak/ChessEngine")
+        }
+    }
+    publications {
+        register("gpr", MavenPublication){
+            from components.java
+        }
+    }
 }
