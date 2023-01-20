@@ -30,7 +30,7 @@ publishing {
                 username = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
             }
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/JumpSneak/ChessEngine")
+            url = uri("https://maven.pkg.github.com/julian-hartl/ChessEngine")
         }
     }
     publications {
