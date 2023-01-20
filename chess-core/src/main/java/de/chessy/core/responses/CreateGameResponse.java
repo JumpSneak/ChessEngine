@@ -1,6 +1,6 @@
 package de.chessy.core.responses;
 
-import de.chessy.game.ServerGame;
+import de.chessy.core.game.Game;
 
-public record CreateGameResponse(ServerGame game, boolean isWhitePlayer) {
+public record CreateGameResponse(Game game, boolean isWhitePlayer) {
 }
