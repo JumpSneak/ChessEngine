@@ -27,8 +27,8 @@ repositories {
         url = "https://maven.pkg.github.com/JumpSneak/ChessEngine"
         credentials {
             readEnvFile("../.gpr.env")
-            username = System.getenv("GITHUB_ACTOR") ?: property("GPR_USER")
-            password = System.getenv("GITHUB_TOKEN") ?: property("GPR_TOKEN")
+            username = System.getenv("GITHUB_ACTOR") ?: System.getProperty("GPR_USER")
+            password = System.getenv("GITHUB_TOKEN") ?: System.getProperty("GPR_TOKEN")
         }
     }
 }
