@@ -1,10 +1,10 @@
 package de.chessy.server.endpoints.game;
 
+import de.chessy.core.dtos.ChessMoveDto;
+import de.chessy.core.responses.PlayPieceResponse;
 import de.chessy.game.ServerGame;
 import de.chessy.game.GameRepository;
 import de.chessy.server.Errors;
-import de.chessy.server.dtos.ChessMoveDto;
-import de.chessy.server.responses.PlayPieceResponse;
 import de.chessy.user.User;
 import de.chessy.utils.HttpEndpoint;
 import de.chessy.utils.HttpRequest;

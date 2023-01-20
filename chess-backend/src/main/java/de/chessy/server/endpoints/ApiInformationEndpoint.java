@@ -1,6 +1,6 @@
 package de.chessy.server.endpoints;
 
-import de.chessy.server.responses.ApiInformationResponse;
+import de.chessy.core.responses.ApiInformationResponse;
 import de.chessy.utils.HttpEndpoint;
 import de.chessy.utils.HttpRequest;
 import de.chessy.utils.HttpResponse;
@@ -13,7 +13,7 @@ public class ApiInformationEndpoint extends HttpEndpoint {
     public void onRequest(HttpRequest request, HttpResponse response) {
         response.send(new ApiInformationResponse(
                 1,
-                List.of("Julian Hartl", "Mihal Gora")
+                List.of("Julian Hartl", "Michael Gora")
         ));
     }
 }

@@ -1,7 +1,7 @@
 package de.chessy.server;
 
 import com.sun.net.httpserver.HttpServer;
-import de.chessy.game.GameStatus;
+import de.chessy.core.game.GameStatus;
 import de.chessy.server.endpoints.ApiInformationEndpoint;
 import de.chessy.server.endpoints.game.CreateGameEndpoint;
 import de.chessy.server.endpoints.game.JoinGameEndpoint;

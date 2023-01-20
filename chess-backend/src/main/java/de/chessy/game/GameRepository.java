@@ -1,9 +1,10 @@
 package de.chessy.game;
 
+import de.chessy.core.events.GameStatusChangedEvent;
+import de.chessy.core.events.PieceWasPlayedEvent;
+import de.chessy.core.events.UserJoinedGameEvent;
+import de.chessy.core.game.GameStatus;
 import de.chessy.server.ChessSocket;
-import de.chessy.server.events.GameStatusChangedEvent;
-import de.chessy.server.events.PieceWasPlayedEvent;
-import de.chessy.server.events.UserJoinedGameEvent;
 import de.chessy.user.User;
 
 import java.util.ArrayList;

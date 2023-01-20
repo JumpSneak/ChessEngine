@@ -1,7 +1,7 @@
 package de.chessy.server.middleware;
 
+import de.chessy.core.game.GameStatus;
 import de.chessy.game.ServerGame;
-import de.chessy.game.GameStatus;
 import de.chessy.server.Errors;
 import de.chessy.utils.HttpRequest;
 import de.chessy.utils.HttpResponse;

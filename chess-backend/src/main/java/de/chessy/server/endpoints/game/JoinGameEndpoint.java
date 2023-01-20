@@ -1,12 +1,12 @@
 package de.chessy.server.endpoints.game;
 
-import de.chessy.game.ServerGame;
+import de.chessy.core.dtos.JoinGameDto;
+import de.chessy.core.events.UserJoinedGameEvent;
+import de.chessy.core.responses.JoinGameResponse;
 import de.chessy.game.GameRepository;
+import de.chessy.game.ServerGame;
 import de.chessy.server.ChessSocket;
 import de.chessy.server.Errors;
-import de.chessy.server.dtos.JoinGameDto;
-import de.chessy.server.events.UserJoinedGameEvent;
-import de.chessy.server.responses.JoinGameResponse;
 import de.chessy.user.User;
 import de.chessy.utils.HttpEndpoint;
 import de.chessy.utils.HttpRequest;
