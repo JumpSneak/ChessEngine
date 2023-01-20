@@ -5,8 +5,9 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.google.gson.Gson;
 import com.jumpsneak.chessengine.elements.Board;
 import com.jumpsneak.chessengine.elements.Piece;
-import com.jumpsneak.chessengine.transfer.responses.ServerCreateGameResponse;
-import com.jumpsneak.chessengine.utils.Serializer;
+import de.chessy.core.dtos.JoinGameDto;
+import de.chessy.core.responses.CreateGameResponse;
+import de.chessy.core.utils.Serializer;
 
 import java.io.IOException;
 import java.net.URI;
@@ -17,12 +18,6 @@ import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 public class Client {
-
-    static class Endpoints {
-        static public String play = "game/playPiece";
-        static public String create = "game/create";
-        static public String join = "game/join";
-    }
 
     static HttpClient client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
@@ -51,10 +46,11 @@ public class Client {
         try {
             playerid = 0;
             var response = makeRequest("", Endpoints.create);
-            System.out.println(response);
-            if (response.statusCode() != 200) return false;
-            ServerCreateGameResponse createGameResponse = Serializer.fromJson(response.body(), ServerCreateGameResponse.class);
-            gameid = createGameResponse.game().id();
+            if (response == null || response.statusCode() != 200) {
+                return false;
+            }
+            CreateGameResponse createGameResponse = Serializer.fromJson(response.body(), CreateGameResponse.class);
+            gameid = createGameResponse.game().id;
             board.setWhite(createGameResponse.isWhitePlayer());
             clientSocket = new ClientSocket(gameid, playerid);
             return response.statusCode() == 200 && clientSocket.connectBlocking(10, TimeUnit.SECONDS);
@@ -67,19 +63,13 @@ public class Client {
     public static boolean joinGame(Board board) {
         try {
             playerid = 1;
-            var response = makeRequest(new JoinGameRequest(gameid), Endpoints.join);
+            var response = makeRequest(new JoinGameDto(gameid), Endpoints.join);
             System.out.println(response);
             System.out.println(response.body());
             if (response.statusCode() != 200) return false;
             JsonValue j = new JsonReader().parse(response.body());
             gameid = j.getInt("gameId");
             board.setWhite(j.getBoolean("isWhitePlayer"));
-//            Gson g = new Gson();
-//            CreateGameResponse createGameResponse = g.fromJson(response.body(), CreateGameResponse.class);
-//            gameid = createGameResponse.id;
-            //board.setWhite(createGameResponse.isWhite); falsch
-//            System.out.println(createGameResponse.isWhite);
-            // movesocket
             clientSocket = new ClientSocket(gameid, playerid);
             return response.statusCode() == 200 && clientSocket.connectBlocking(10, TimeUnit.SECONDS);
         } catch (Exception e) {
@@ -94,7 +84,6 @@ public class Client {
                     .header("Content-Type", "application/json")
                     .header("gameId", String.valueOf(gameid))
                     .header("userId", String.valueOf(playerid))
-                    .header("isWhitePlayer", String.valueOf(localPlaysAsWhite))
                     .POST(HttpRequest.BodyPublishers.ofString(new Gson().toJson(o)))
                     .build(), HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
