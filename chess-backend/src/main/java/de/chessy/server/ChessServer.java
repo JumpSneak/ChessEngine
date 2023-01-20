@@ -24,7 +24,7 @@ public class ChessServer {
                 new ApiInformationEndpoint(),
                 new LoggingMiddleware()
         ));
-        server.createContext(Endpoints.play, new HttpEndpointWrapper(
+        server.createContext(Endpoints.playPiece, new HttpEndpointWrapper(
                 new PlayPieceHandler(),
                 new LoggingMiddleware(),
                 new UserAuthenticationMiddleware(),
@@ -32,12 +32,12 @@ public class ChessServer {
                 new GameAuthenticationMiddleware(),
                 new GameStatusRequirementMiddleware(GameStatus.IN_PROGRESS)
         ));
-        server.createContext(Endpoints.create, new HttpEndpointWrapper(
+        server.createContext(Endpoints.createGame, new HttpEndpointWrapper(
                 new CreateGameEndpoint(),
                 new LoggingMiddleware(),
                 new UserAuthenticationMiddleware()
         ));
-        server.createContext(Endpoints.join, new HttpEndpointWrapper(
+        server.createContext(Endpoints.joinGame, new HttpEndpointWrapper(
                 new JoinGameEndpoint(),
                 new LoggingMiddleware(),
                 new UserAuthenticationMiddleware()
