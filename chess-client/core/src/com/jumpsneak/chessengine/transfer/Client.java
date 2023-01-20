@@ -27,16 +27,20 @@ public class Client {
             .build();
     static ClientSocket clientSocket;
     public static boolean localPlaysAsWhite = true;
-    public static boolean illegalMove = false;
     static int playerid = 0;
     static int gameid = 0;
     static MoveInformation bufferedInput = null;
 
-    public static void sendMove(Piece piece, int toTileX, int toTileY) {
+    public static boolean sendMove(Piece piece, int toTileX, int toTileY) {
         HttpResponse<String> response = makeRequest(new MoveInformation(piece.getTilex(), piece.getTiley(), toTileX, toTileY), Endpoints.playPiece);
         if (response == null || response.statusCode() != 200) {
-            illegalMove = true;
+            System.out.println("Error sending move");
+            if (response != null) {
+                System.out.println(response.body());
+            }
+            return false;
         }
+        return true;
     }
 
     public static boolean createGame(Board board) {
@@ -46,6 +50,7 @@ public class Client {
             if (response == null || response.statusCode() != 200) {
                 return false;
             }
+            System.out.println(response.body());
             CreateGameResponse createGameResponse = Serializer.fromJson(response.body(), CreateGameResponse.class);
             gameid = createGameResponse.game().id;
             board.setWhite(createGameResponse.isWhitePlayer());

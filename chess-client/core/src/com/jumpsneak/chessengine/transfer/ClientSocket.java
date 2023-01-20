@@ -1,13 +1,13 @@
 package com.jumpsneak.chessengine.transfer;
 
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
+import de.chessy.core.events.Event;
+import de.chessy.core.events.PieceWasPlayedEvent;
+import de.chessy.core.utils.Serializer;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
 import java.util.Map;
 
 public class ClientSocket extends WebSocketClient {
@@ -17,8 +17,7 @@ public class ClientSocket extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
-        send("Hello, it is me. Mario :)");
-        System.out.println("new connection opened");
+        System.out.println("Connected to server");
     }
 
     @Override
@@ -29,17 +28,13 @@ public class ClientSocket extends WebSocketClient {
     @Override
     public void onMessage(String message) {
         System.out.println("received message: " + message);
-        JsonValue json = new JsonReader().parse(message);
-        if (json.getString("eventKey").equals("PIECE_PLAYED")) {
+        Event event = Serializer.fromJson(message, Event.class);
+        if (event.eventKey.equals("PIECE_PLAYED")) {
+            PieceWasPlayedEvent pieceWasPlayedEvent = Serializer.fromJson(message, PieceWasPlayedEvent.class);
             Client.setBufferedInput(new MoveInformation(
-                    json.getInt("oldX"), json.getInt("oldY"),
-                    json.getInt("x"), json.getInt("y")));
+                    pieceWasPlayedEvent.oldX, pieceWasPlayedEvent.oldY,
+                    pieceWasPlayedEvent.x, pieceWasPlayedEvent.y));
         }
-    }
-
-    @Override
-    public void onMessage(ByteBuffer message) {
-        System.out.println("received ByteBuffer");
     }
 
     @Override

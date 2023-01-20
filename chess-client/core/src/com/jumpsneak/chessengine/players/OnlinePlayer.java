@@ -20,6 +20,7 @@ public class OnlinePlayer extends Player{
         // check for new move from server, if so then movePiece
         MoveInformation bufferedInput = Client.getAndRemoveBufferedInput();
         if(bufferedInput != null){
+            System.out.println("Received move from server");
             Piece p = board.getPieceOn(bufferedInput.oldX(), bufferedInput.oldY());
             boolean status = board.movePiece(p, bufferedInput.x(), bufferedInput.y());
             bufferedInput = null;
