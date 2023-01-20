@@ -1,5 +1,10 @@
 package de.chessy.game;
 
+import de.chessy.core.events.GameStatusChangedEvent;
+import de.chessy.core.events.PieceWasPlayedEvent;
+import de.chessy.core.events.UserJoinedGameEvent;
+import de.chessy.core.game.GameStatus;
+import de.chessy.server.ChessSocket;
 import de.chessy.user.User;
 
 import java.util.ArrayList;
@@ -8,10 +13,13 @@ import java.util.Optional;
 
 public class GameRepository {
 
+    private static final int EMPTY_FIELD = -1;
 
     private static int currentId = 0;
 
     private static GameRepository instance;
+
+    private final ChessSocket chessSocket = ChessSocket.getInstance();
 
     public static GameRepository getInstance() {
         if (instance == null) {
@@ -24,40 +32,32 @@ public class GameRepository {
         this.games = new ArrayList<>();
     }
 
-    private final List<Game> games;
+    private final List<ServerGame> games;
 
-    public Game create(int creator) {
-        Game game = new Game(currentId++, creator, null, new Board(generateInitialField()));
+    public ServerGame create(int creator) {
+        ServerGame game = new ServerGame(currentId++, creator, null);
+        game.generateInitialField();
         games.add(game);
         return game;
     }
 
-    public Optional<Game> get(int id) {
+    public Optional<ServerGame> get(int id) {
         return games.stream().filter(game -> game.id == id).findFirst();
     }
 
-    public Optional<String> getPieceName(Game game, int x, int y) {
-        try {
-            return Optional.of(game.board.fields()[x][y].pieceName());
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
-    public Optional<Move> makeMove(Game game, int x, int y, int oldX, int oldY, User player) {
+    public Optional<Move> makeMove(ServerGame game, int x, int y, int oldX, int oldY, User player) {
         try {
             var move = new Move(x, y, oldX, oldY);
             var board = game.board;
-            var isValidMove = MoveValidator.isValidMove(move, board);
+            var isValidMove = MoveValidator.isValidMove(move, game, player);
             if (!isValidMove) {
                 return Optional.empty();
             }
-            var pieceName = getPieceName(game, oldX, oldY);
-            if (pieceName.isEmpty()) {
-                return Optional.empty();
-            }
-            board.fields()[x][y] = new Piece(pieceName.get(), player.id() == game.white);
-            board.fields()[oldX][oldY] = null;
+            board[x][y] = board[oldX][oldY];
+            board[oldX][oldY] = EMPTY_FIELD;
+            PieceWasPlayedEvent event = new PieceWasPlayedEvent(oldX, oldY, x, y, player.id());
+            Integer receiver = game.getOtherPlayer(player.id());
+            chessSocket.emitEvent(event, receiver);
             return Optional.of(move);
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,40 +66,16 @@ public class GameRepository {
 
     }
 
-    private static Piece[][] generateInitialField() {
-        Piece[][] field = new Piece[8][8];
-        for (int i = 0; i < 8; i++) {
-            field[1][i] = new Piece("pawn", true);
-            field[6][i] = new Piece("pawn", false);
-        }
-        field[0][0] = new Piece("rook", true);
-        field[0][7] = new Piece("rook", true);
-        field[7][0] = new Piece("rook", false);
-        field[7][7] = new Piece("rook", false);
-        field[0][1] = new Piece("knight", true);
-        field[0][6] = new Piece("knight", true);
-        field[7][1] = new Piece("knight", false);
-        field[7][6] = new Piece("knight", false);
-        field[0][2] = new Piece("bishop", true);
-        field[0][5] = new Piece("bishop", true);
-        field[7][2] = new Piece("bishop", false);
-        field[7][5] = new Piece("bishop", false);
-        field[0][3] = new Piece("queen", true);
-        field[0][4] = new Piece("king", true);
-        field[7][3] = new Piece("queen", false);
-        field[7][4] = new Piece("king", false);
-        return field;
-    }
-
-    public Game join(int gameId, int userId) {
-        Optional<Game> gameOptional = get(gameId);
+    public ServerGame join(int gameId, int userId) {
+        Optional<ServerGame> gameOptional = get(gameId);
         if (gameOptional.isEmpty()) {
             System.out.println("Game could not be joined: Not found.");
             return null;
         }
-        Game game = gameOptional.get();
+        ServerGame game = gameOptional.get();
         if (game.hasPlayer(userId)) {
-            return game;
+            System.out.println("Game could not be joined: User already in game.");
+            return null;
         }
         if (game.black == null) {
             game.black = userId;
@@ -109,6 +85,32 @@ public class GameRepository {
             System.out.println("Game could not be joined: Game is full.");
             return null;
         }
+        UserJoinedGameEvent event = new UserJoinedGameEvent(gameId, userId, game.isWhite(userId));
+        chessSocket.emitEvent(event, userId);
+        if (isFull(gameId)) {
+            setStatus(gameId, GameStatus.IN_PROGRESS);
+        }
         return game;
+    }
+
+    public boolean setStatus(int gameId, GameStatus status) {
+        Optional<ServerGame> gameOptional = get(gameId);
+        if (gameOptional.isEmpty()) {
+            return false;
+        }
+        ServerGame game = gameOptional.get();
+        game.status = status;
+        GameStatusChangedEvent event = new GameStatusChangedEvent(gameId, status);
+        chessSocket.emitEvent(event, game.getPlayers());
+        return true;
+    }
+
+    public boolean isFull(int gameId) {
+        Optional<ServerGame> gameOptional = get(gameId);
+        if (gameOptional.isEmpty()) {
+            return false;
+        }
+        ServerGame game = gameOptional.get();
+        return game.white != null && game.black != null;
     }
 }

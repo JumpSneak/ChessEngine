@@ -7,11 +7,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.jumpsneak.chessengine.players.LocalPlayer;
 import com.jumpsneak.chessengine.players.OnlinePlayer;
 import com.jumpsneak.chessengine.players.Player;
 import com.jumpsneak.chessengine.transfer.Client;
@@ -19,9 +14,10 @@ import com.jumpsneak.chessengine.transfer.MoveInformation;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class Board extends Group {
     TextureRegion muell = new TextureRegion(new Texture("white.png"));
@@ -40,7 +36,7 @@ public class Board extends Group {
     float rowsy = 8;
     boolean boardFlipped = false;
     List<Piece> pieceslist = new ArrayList<>();
-    Piece[][] boardPieces = new Piece[(int)colsx][(int)rowsy];
+    Piece[][] boardPieces = new Piece[(int) colsx][(int) rowsy];
 
     public Board(Player playerWhite, Player playerBlack, boolean joining) {
         // Board stuff
@@ -55,16 +51,16 @@ public class Board extends Group {
             onlineGame = true;
             Client.localPlaysAsWhite = true;
             boolean result;
-            if(joining){
+            if (joining) {
                 result = Client.joinGame(this);
-            }else{
+            } else {
                 result = Client.createGame(this);
             }
-            if(!result){
+            if (!result) {
                 System.out.println("No Connection");
                 System.exit(0);
             }
-        }else{
+        } else {
             setWhite(true);
         }
     }
@@ -91,7 +87,7 @@ public class Board extends Group {
         }
         // draw pieces
         for (int i = 0; i < pieceslist.size(); i++) {
-            if(activePiece!= null && pieceslist.get(i) == activePiece){
+            if (activePiece != null && pieceslist.get(i) == activePiece) {
                 continue;
             }
             batch.draw(pieceslist.get(i).textureRegion, pieceslist.get(i).posx, pieceslist.get(i).posy, tileSize, tileSize);
@@ -102,15 +98,15 @@ public class Board extends Group {
             for (int y = 0; y < rowsy; y++) {
                 for (int x = 0; x < colsx; x++) {
                     if (activePiece.isLegalMove(x, y)) {
-                        if(getPieceOn(x, y) == null) {
+                        if (getPieceOn(x, y) == null) {
                             shaper.filledCircle(invertTileAccordingly(x, true) * tileSize + originx + tileSize / 2,
                                     invertTileAccordingly(y, false) * tileSize + originy + tileSize / 2,
                                     radius, new Color(0x33333322));
-                        }else{
+                        } else {
                             shaper.setColor(new Color(0x33333322));
                             shaper.circle(invertTileAccordingly(x, true) * tileSize + originx + tileSize / 2,
                                     invertTileAccordingly(y, false) * tileSize + originy + tileSize / 2,
-                                    tileSize/2-5,
+                                    tileSize / 2 - 5,
                                     10,
                                     JoinType.SMOOTH);
                         }
@@ -127,23 +123,18 @@ public class Board extends Group {
     public void inputUpdate() {
         // Drag and Drop
         if (Gdx.input.justTouched()) { // begin drag
-            if(onlineGame && Client.illegalMove){
-                System.out.println("ILLEGAL");
-                return;
+            boolean currentTurn = whiteTurn;
+            for (var illegalMove : illegalMoves) {
+                // reset illegal moves
+                var piece = getPieceOn(illegalMove.x(), illegalMove.y());
+                piece.tilex = illegalMove.oldX();
+                piece.tiley = illegalMove.oldY();
+                currentTurn = !currentTurn;
             }
             float height = tileSize * rowsy;
             int xtile = invertTileAccordingly(getMouseTileX(), true);
             int ytile = invertTileAccordingly(getMouseTileY(), false);
             activePiece = getPieceOn(xtile, ytile);
-            // old method
-//            for (Piece p : pieceslist) {
-//                if (p.tilex == xtile && p.tiley == ytile) {
-//                    activePiece = p;
-//                    pieceslist.remove(p);
-//                    pieceslist.add(p);
-//                    return;
-//                }
-//            }
         } else if (activePiece != null && !Gdx.input.isTouched()) { // drop
             int xtile = invertTileAccordingly(getMouseTileX(), true);
             int ytile = invertTileAccordingly(getMouseTileY(), false);
@@ -159,6 +150,8 @@ public class Board extends Group {
         }
     }
 
+    private final Queue<MoveInformation> illegalMoves = new LinkedList<>();
+
     public boolean movePiece(Piece piece, int toTilex, int toTiley) {
         if (piece == null) {
             return false;
@@ -172,17 +165,23 @@ public class Board extends Group {
             if (otherPiece != null && otherPiece.isWhite != piece.isWhite) {
                 removePiece(otherPiece);
             }
+            int currentTileX = piece.tilex;
+            int currentTileY = piece.tiley;
             if (onlineGame) {
-                Client.sendMove(piece, toTilex, toTiley);
+                new Thread(() -> {
+                    if (!Client.sendMove(piece, toTilex, toTiley)) {
+                        illegalMoves.add(new MoveInformation(currentTileX, currentTileY, toTilex, toTiley));
+                    }
+                }).start();
             }
             lastMove = new MoveInformation(piece.tilex, piece.tiley, toTilex, toTiley);
             setPieceOn(null, piece.tilex, piece.tiley);
             piece.tilex = toTilex;
             piece.tiley = toTiley;
             setPieceOn(piece, piece.tilex, piece.tiley);
-            if(piece.name.equals("Pawn")){
+            if (piece.name.equals("Pawn")) {
                 // Pawn to Queen conversion
-                if(piece.isWhite && piece.tiley == 7 || !piece.isWhite && piece.tiley == 0){
+                if (piece.isWhite && piece.tiley == 7 || !piece.isWhite && piece.tiley == 0) {
                     Piece q = new Queen(this, piece.tilex, piece.tiley, piece.isWhite);
                     positionPiece(q, q.tilex, q.tiley);
                     removePiece(piece);
@@ -198,7 +197,7 @@ public class Board extends Group {
 //                    ((Pawn) activePiece).setEnPassantPossible(false);
 //                }
 //            }
-            System.out.println(activePlayer.toString()+cordsToString(piece, toTilex, toTiley));
+            System.out.println(activePlayer.toString() + cordsToString(piece, toTilex, toTiley));
             successful = true;
             whiteTurn = !whiteTurn;
             if (activePlayer == playerWhite) {
@@ -207,12 +206,13 @@ public class Board extends Group {
                 activePlayer = playerWhite;
             }
         }
+        System.out.println("Moving " + piece.name + " to " + toTilex + " " + toTiley + " " + successful);
         positionPiece(piece, piece.tilex, piece.tiley);
         return successful;
     }
 
     public Piece getPieceOn(int x, int y) {
-        if(x < 0 || x >= colsx || y <0 || y>=rowsy){
+        if (x < 0 || x >= colsx || y < 0 || y >= rowsy) {
             return null;
         }
         return boardPieces[x][y];
@@ -224,17 +224,20 @@ public class Board extends Group {
 //        }
 //        return null;
     }
-    public boolean setPieceOn(Piece piece, int x, int y){
-        if(x < 0 || x >= colsx || y <0 || y>=rowsy){
+
+    public boolean setPieceOn(Piece piece, int x, int y) {
+        if (x < 0 || x >= colsx || y < 0 || y >= rowsy) {
             return false;
         }
         boardPieces[x][y] = piece;
         return true;
     }
-    public boolean isChecked(int oldx, int oldy, int newx, int newy){
-                                                                                //TODO
+
+    public boolean isChecked(int oldx, int oldy, int newx, int newy) {
+        //TODO
         return false;
     }
+
     public void initPieces() {
         for (int i = 0; i < 8; i++) {
             pieceslist.add(new Pawn(this, i, 1, true));
@@ -261,20 +264,22 @@ public class Board extends Group {
         pieceslist.add(new King(this, 4, 7, false));
 
         // init boardPieces
-        for(Piece p: pieceslist){
-            if(p != null){
+        for (Piece p : pieceslist) {
+            if (p != null) {
                 boardPieces[p.tilex][p.tiley] = p;
             }
         }
     }
-    public void removePiece(Piece piece){
-        if(getPieceOn(piece.tilex, piece.tiley) == piece) {
+
+    public void removePiece(Piece piece) {
+        if (getPieceOn(piece.tilex, piece.tiley) == piece) {
             setPieceOn(null, piece.tilex, piece.tiley);
         }
         pieceslist.remove(piece);
     }
+
     public void setWhite(boolean toWhite) {
-        if(!toWhite){
+        if (!toWhite) {
             Player zw = playerWhite;
             this.playerWhite = playerBlack;
             this.playerBlack = zw;

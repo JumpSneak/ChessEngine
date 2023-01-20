@@ -9,6 +9,6 @@ public class LoggingMiddleware implements Middleware {
     public void handle(HttpRequest request, HttpResponse response, MiddlewareNextFunction next) {
         System.out.println("LoggingMiddleware: " + request.getMethod() + " " + request.getPath());
         next.next(request, response);
-        System.out.println("LoggingMiddleware: " + response.getStatusCode());
+        System.out.println("LoggingMiddleware: " + response.getStatusCode() + " " + response.getBody());
     }
 }

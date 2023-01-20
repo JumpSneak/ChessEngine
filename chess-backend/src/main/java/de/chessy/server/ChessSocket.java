@@ -1,8 +1,8 @@
 package de.chessy.server;
 
+import de.chessy.core.events.ConnectToGameEvent;
+import de.chessy.core.events.Event;
 import de.chessy.game.GameRepository;
-import de.chessy.server.events.ConnectToGameEvent;
-import de.chessy.server.events.Event;
 import de.chessy.user.User;
 import de.chessy.user.UserRepository;
 import de.chessy.utils.Serializer;
@@ -71,6 +71,7 @@ public class ChessSocket extends WebSocketServer {
             conn.close(CloseFrame.ABNORMAL_CLOSE, "Internal server error");
         }
     }
+
 
     public void emitEvent(Event event, Integer receiver) {
         emitEvent(event, List.of(receiver));

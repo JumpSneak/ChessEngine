@@ -1,7 +1,8 @@
 package de.chessy.server;
 
-import de.chessy.game.GameStatus;
-import de.chessy.server.responses.ErrorResponse;
+
+import de.chessy.core.game.GameStatus;
+import de.chessy.core.responses.ErrorResponse;
 
 public class Errors {
     public static final ErrorResponse GAME_NOT_FOUND = new ErrorResponse("Game not found", 1, "Check if the game id is correct");

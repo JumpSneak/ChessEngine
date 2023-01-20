@@ -10,6 +10,6 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("ChessEngine");
 		config.setWindowedMode(900, 900);
-		new Lwjgl3Application(new Main(), config);
+		new Lwjgl3Application(new ChessGame(), config);
 	}
 }

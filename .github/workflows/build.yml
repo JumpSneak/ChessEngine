@@ -13,14 +13,15 @@ on:
   pull_request:
     branches: [ "main" ]
 
+
 permissions:
   contents: read
+  packages: read
 
 jobs:
   build-server:
-
-      runs-on: ubuntu-latest
-      steps:
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -30,20 +31,37 @@ jobs:
       - name: Build server
         working-directory: ./chess-backend
         run: gradle build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
 
   build-client:
 
     runs-on: ubuntu-latest
-    defaults:
-      run: 
-        working-directory: ./chess-client
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'corretto'
-    - name: Build client
-      working-directory: ./chess-client
-      run: gradle build
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+      - name: Build client
+        working-directory: ./chess-client
+        run: gradle build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+
+  build-core:
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+      - name: Build CORE
+        working-directory: ./chess-core
+        run: gradle build

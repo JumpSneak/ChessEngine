@@ -10,25 +10,26 @@ import com.jumpsneak.chessengine.players.LocalPlayer;
 import com.jumpsneak.chessengine.players.OnlinePlayer;
 
 public class GameScreen implements Screen {
-    Stage stage;
-    Board board;
-    public GameScreen(){
+    private Stage stage;
+    private final Board board;
+
+    public GameScreen(Board board) {
+        this.board = board;
         create();
     }
 
-    public void create () {
-        System.out.println("heeelü");
+    public void create() {
         stage = new Stage(new ScreenViewport());
-        board = new Board(new LocalPlayer("Michi"), new OnlinePlayer("Loser"), true);
         stage.addActor(board);
         Gdx.input.setInputProcessor(stage);
     }
 
     @Override
-    public void render (float delta) {
+    public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
         stage.draw();
     }
+
     @Override
     public void show() {
 
