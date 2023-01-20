@@ -87,6 +87,9 @@ public class GameRepository {
         }
         UserJoinedGameEvent event = new UserJoinedGameEvent(gameId, userId, game.isWhite(userId));
         chessSocket.emitEvent(event, userId);
+        if (isFull(gameId)) {
+            setStatus(gameId, GameStatus.IN_PROGRESS);
+        }
         return game;
     }
 
@@ -100,5 +103,14 @@ public class GameRepository {
         GameStatusChangedEvent event = new GameStatusChangedEvent(gameId, status);
         chessSocket.emitEvent(event, game.getPlayers());
         return true;
+    }
+
+    public boolean isFull(int gameId) {
+        Optional<ServerGame> gameOptional = get(gameId);
+        if (gameOptional.isEmpty()) {
+            return false;
+        }
+        ServerGame game = gameOptional.get();
+        return game.white != null && game.black != null;
     }
 }
