@@ -11,7 +11,9 @@
 name: Publish package to GitHub Packages
 on:
   push:
-      branches: ["*"]
+    branches: [ "main" ]
+  pull_request:
+      branches: [ "main" ]
 jobs:
   publish:
     runs-on: ubuntu-latest
