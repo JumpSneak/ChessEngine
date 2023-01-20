@@ -1,4 +1,4 @@
-package de.chessy.server.responses;
+package de.chessy.core.responses;
 
 public record JoinGameResponse(int gameId, boolean isWhitePlayer) {
 

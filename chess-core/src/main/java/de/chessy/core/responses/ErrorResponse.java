@@ -1,4 +1,4 @@
-package de.chessy.server.responses;
+package de.chessy.core.responses;
 
 public record ErrorResponse(String message, int errorCode, String hint) {
 }

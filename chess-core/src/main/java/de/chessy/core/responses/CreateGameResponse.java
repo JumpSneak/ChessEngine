@@ -1,4 +1,4 @@
-package de.chessy.server.responses;
+package de.chessy.core.responses;
 
 import de.chessy.game.ServerGame;
 

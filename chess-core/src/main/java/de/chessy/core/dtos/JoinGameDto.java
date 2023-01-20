@@ -1,4 +1,4 @@
-package de.chessy.server.dtos;
+package de.chessy.core.dtos;
 
 public record JoinGameDto(int gameId) {
 }
