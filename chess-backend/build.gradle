@@ -15,7 +15,7 @@ repositories {
         url = "https://maven.pkg.github.com/JumpSneak/ChessEngine"
         credentials {
             username = System.getenv("GITHUB_ACTOR") ?: "julian-hartl"
-            password = System.getenv("GITHUB_TOKEN") ?: "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"
+            password = System.getenv("GITHUB_TOKEN") ?: "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"
         }
     }
 }

@@ -1,7 +1,8 @@
 package de.chessy.game;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.chessy.core.game.pieces.PieceMetadata;
+import de.chessy.core.game.Game;
+import de.chessy.core.game.pieces.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
