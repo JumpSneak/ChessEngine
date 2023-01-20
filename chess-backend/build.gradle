@@ -10,25 +10,29 @@ repositories {
     mavenCentral()
 
     maven {
+        url
         name = "GitHubPackages"
         url = new URI("https://maven.pkg.github.com/JumpSneak/ChessEngine")
         credentials {
             username = System.getenv("GITHUB_ACTOR") ?: "julian-hartl"
-            password = System.getenv("GITHUB_TOKEN") ?:"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"
+            password = System.getenv("GITHUB_TOKEN") ?: "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"
         }
     }
+}
+
+configurations.configureEach {
+    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
 }
 
 dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    // jackson
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
-    implementation 'org.postgresql:postgresql:42.1.4'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.1'
+    implementation 'org.postgresql:postgresql:42.2.27'
     implementation 'org.java-websocket:Java-WebSocket:1.5.3'
     implementation('de.chessy:chess-core:0.0.1-SNAPSHOT') {
-        isChanging()
+        setChanging(true)
     }
 }
 

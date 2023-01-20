@@ -16,6 +16,10 @@ buildscript {
     }
 }
 
+configurations.configureEach {
+    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
+}
+
 allprojects {
     apply plugin: "eclipse"
 
@@ -41,7 +45,7 @@ allprojects {
         maven { url "https://jitpack.io" }
         maven {
             name = "GitHubPackages"
-            url = new URI("https://maven.pkg.github.com/JumpSneak/ChessEngine")
+            url = "https://maven.pkg.github.com/JumpSneak/ChessEngine"
             credentials {
                 username = System.getenv("GITHUB_ACTOR") ?: "julian-hartl"
                 password = System.getenv("GITHUB_TOKEN") ?: "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"
@@ -71,6 +75,8 @@ project(":core") {
         implementation 'com.google.code.gson:gson:2.8.8'
         implementation 'org.java-websocket:Java-WebSocket:1.5.3'
         implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
-        implementation 'de.chessy:chess-core:0.0.1-SNAPSHOT'
+        implementation ('de.chessy:chess-core:0.0.1-SNAPSHOT') {
+            setChanging(true)
+        }
     }
 }
