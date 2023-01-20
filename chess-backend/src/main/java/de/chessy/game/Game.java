@@ -1,6 +1,5 @@
 package de.chessy.game;
 
-import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.chessy.game.pieces.*;
 
