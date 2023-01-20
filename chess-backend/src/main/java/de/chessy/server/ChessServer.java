@@ -26,7 +26,6 @@ public class ChessServer {
         ));
         server.createContext(Endpoints.playPiece, new HttpEndpointWrapper(
                 new PlayPieceHandler(),
-                new LoggingMiddleware(),
                 new UserAuthenticationMiddleware(),
                 new GameIdValidatorMiddleware(),
                 new GameAuthenticationMiddleware(),
@@ -34,17 +33,14 @@ public class ChessServer {
         ));
         server.createContext(Endpoints.createGame, new HttpEndpointWrapper(
                 new CreateGameEndpoint(),
-                new LoggingMiddleware(),
                 new UserAuthenticationMiddleware()
         ));
         server.createContext(Endpoints.joinGame, new HttpEndpointWrapper(
                 new JoinGameEndpoint(),
-                new LoggingMiddleware(),
                 new UserAuthenticationMiddleware()
         ));
         server.createContext(Endpoints.currentUser, new HttpEndpointWrapper(
                 new MeEndpoint(),
-                new LoggingMiddleware(),
                 new UserAuthenticationMiddleware()
         ));
         server.setExecutor(null);

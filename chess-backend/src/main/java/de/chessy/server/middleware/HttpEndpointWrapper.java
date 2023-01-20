@@ -16,7 +16,9 @@ public class HttpEndpointWrapper implements HttpHandler {
     private final List<Middleware> middlewares;
 
     public HttpEndpointWrapper(HttpEndpoint endpoint, Middleware... middlewares) {
-        this.middlewares = new ArrayList<>(middlewares.length + 1);
+        this.middlewares = new ArrayList<>(middlewares.length + 3);
+        this.middlewares.add(new LoggingMiddleware());
+        this.middlewares.add(new ErrorCatcherMiddleware());
         Collections.addAll(this.middlewares, middlewares);
         this.middlewares.add(new HttpEndpointMiddlewareWrapper(endpoint));
     }
@@ -26,17 +28,7 @@ public class HttpEndpointWrapper implements HttpHandler {
         var next = new MiddlewareNextFunctionImpl();
         HttpRequest request = new HttpRequest(exchange);
         HttpResponse response = new HttpResponse(exchange);
-        try (exchange) {
-            next.next(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.send(Errors.INTERNAL_SERVER_ERROR);
-            return;
-        }
-        if (response.isClosed()) {
-            return;
-        }
-        response.send(Errors.NOT_FOUND);
+        next.next(request, response);
     }
 
     private class MiddlewareNextFunctionImpl implements MiddlewareNextFunction {

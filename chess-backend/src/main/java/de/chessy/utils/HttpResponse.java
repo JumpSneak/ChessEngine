@@ -26,6 +26,8 @@ public class HttpResponse {
 
     private boolean hasSentHeaders = false;
 
+    private Object body;
+
     public void send(Object body) {
         try {
             if (!hasSentHeaders) {
@@ -35,6 +37,7 @@ public class HttpResponse {
             hasSentHeaders = true;
             OutputStream responseBody = exchange.getResponseBody();
             if (!isClosed) {
+                this.body = body;
                 responseBody.write(Serializer.serialize(body).getBytes());
                 responseBody.close();
                 isClosed = true;
@@ -44,6 +47,10 @@ public class HttpResponse {
         } finally {
             exchange.close();
         }
+    }
+
+    public Object getBody() {
+        return body;
     }
 
     public boolean isClosed() {
