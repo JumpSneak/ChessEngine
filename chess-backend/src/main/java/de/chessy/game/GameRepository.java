@@ -54,7 +54,7 @@ public class GameRepository {
             }
             board[x][y] = board[oldX][oldY];
             board[oldX][oldY] = EMPTY_FIELD;
-            PieceWasPlayedEvent event = new PieceWasPlayedEvent(oldX, oldY, x, y);
+            PieceWasPlayedEvent event = new PieceWasPlayedEvent(oldX, oldY, x, y, player.id());
             Integer receiver = game.getOtherPlayer(player.id());
             chessSocket.emitEvent(event, receiver);
             return Optional.of(move);
