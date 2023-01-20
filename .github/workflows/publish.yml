@@ -32,4 +32,4 @@ jobs:
           arguments: publish
           build-root-directory: ./chess-core
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}

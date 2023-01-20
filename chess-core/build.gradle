@@ -26,15 +26,15 @@ publishing {
     repositories {
         maven {
             credentials {
-                password = "JumpSneak"
-                username = System.getenv("PUBLISH_TOKEN")
+                username = "JumpSneak"
+                password = System.getenv("PUBLISH_TOKEN")
             }
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/JumpSneak/ChessEngine")
         }
     }
     publications {
-        register("gpr", MavenPublication){
+        register("gpr", MavenPublication) {
             from components.java
         }
     }
