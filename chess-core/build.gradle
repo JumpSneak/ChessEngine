@@ -26,11 +26,11 @@ publishing {
     repositories {
         maven {
             credentials {
-                password = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
-                username = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+                password = "JumpSneak"
+                username = System.getenv("PUBLISH_TOKEN")
             }
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/julian-hartl/ChessEngine")
+            url = uri("https://maven.pkg.github.com/JumpSneak/ChessEngine")
         }
     }
     publications {
