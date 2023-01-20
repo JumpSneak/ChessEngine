@@ -2,12 +2,12 @@ package de.chessy.core.events;
 
 public class PieceWasPlayedEvent extends Event {
 
-    public final int oldX;
-    public final int oldY;
-    public final int x;
-    public final int y;
+    public  int oldX;
+    public  int oldY;
+    public  int x;
+    public  int y;
 
-    public final int playerId;
+    public  int playerId;
 
     public PieceWasPlayedEvent(int oldX, int oldY, int x, int y, int playerId) {
         super("PIECE_PLAYED");
@@ -16,5 +16,8 @@ public class PieceWasPlayedEvent extends Event {
         this.x = x;
         this.y = y;
         this.playerId = playerId;
+    }
+
+    public PieceWasPlayedEvent() {
     }
 }
