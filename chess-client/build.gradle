@@ -16,9 +16,6 @@ buildscript {
     }
 }
 
-configurations.configureEach {
-    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
-}
 
 def readEnvFile(String path) {
     def envFile = file(path)
@@ -46,6 +43,11 @@ allprojects {
         gdxControllersVersion = '2.2.1'
         shapedrawerVersion = '2.5.0'
     }
+
+    configurations.configureEach {
+        resolutionStrategy.cacheChangingModulesFor(0, "seconds")
+    }
+
 
     repositories {
         mavenLocal()

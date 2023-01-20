@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.google.gson.Gson;
 import com.jumpsneak.chessengine.elements.Board;
 import com.jumpsneak.chessengine.elements.Piece;
+import de.chessy.core.Endpoints;
 import de.chessy.core.dtos.JoinGameDto;
 import de.chessy.core.responses.CreateGameResponse;
 import de.chessy.core.utils.Serializer;
@@ -31,12 +32,8 @@ public class Client {
     static int gameid = 0;
     static MoveInformation bufferedInput = null;
 
-    public static void sendSpam(MoveInformation moveInformation) {
-        System.out.println(makeRequest(new MoveInformation(1, 1, 0, 1), Endpoints.play).body());
-    }
-
     public static void sendMove(Piece piece, int toTileX, int toTileY) {
-        HttpResponse<String> response = makeRequest(new MoveInformation(piece.getTilex(), piece.getTiley(), toTileX, toTileY), Endpoints.play);
+        HttpResponse<String> response = makeRequest(new MoveInformation(piece.getTilex(), piece.getTiley(), toTileX, toTileY), Endpoints.playPiece);
         if (response == null || response.statusCode() != 200) {
             illegalMove = true;
         }
@@ -45,7 +42,7 @@ public class Client {
     public static boolean createGame(Board board) {
         try {
             playerid = 0;
-            var response = makeRequest("", Endpoints.create);
+            var response = makeRequest("", Endpoints.createGame);
             if (response == null || response.statusCode() != 200) {
                 return false;
             }
@@ -63,7 +60,7 @@ public class Client {
     public static boolean joinGame(Board board) {
         try {
             playerid = 1;
-            var response = makeRequest(new JoinGameDto(gameid), Endpoints.join);
+            var response = makeRequest(new JoinGameDto(gameid), Endpoints.joinGame);
             System.out.println(response);
             System.out.println(response.body());
             if (response.statusCode() != 200) return false;
