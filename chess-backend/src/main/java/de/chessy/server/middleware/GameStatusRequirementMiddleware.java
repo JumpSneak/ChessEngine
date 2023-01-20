@@ -1,6 +1,6 @@
 package de.chessy.server.middleware;
 
-import de.chessy.game.Game;
+import de.chessy.game.ServerGame;
 import de.chessy.game.GameStatus;
 import de.chessy.server.Errors;
 import de.chessy.utils.HttpRequest;
@@ -17,7 +17,7 @@ public class GameStatusRequirementMiddleware implements Middleware {
     @Override
     public void handle(HttpRequest request, HttpResponse response, MiddlewareNextFunction next) {
 
-        Game game = request.getAttribute("game");
+        ServerGame game = request.getAttribute("game");
         if (game.status != requiredStatus) {
             response.setStatusCode(400);
             response.send(Errors.gameStatusNotMatching(requiredStatus, game.status));

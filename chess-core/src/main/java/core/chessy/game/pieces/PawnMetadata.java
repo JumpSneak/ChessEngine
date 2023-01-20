@@ -1,4 +1,4 @@
-package de.chessy.game.pieces;
+package core.chessy.game.pieces;
 
 public class PawnMetadata extends PieceMetadata {
 

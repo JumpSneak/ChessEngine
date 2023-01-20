@@ -31,20 +31,20 @@ public class GameRepository {
         this.games = new ArrayList<>();
     }
 
-    private final List<Game> games;
+    private final List<ServerGame> games;
 
-    public Game create(int creator) {
-        Game game = new Game(currentId++, creator, null);
+    public ServerGame create(int creator) {
+        ServerGame game = new ServerGame(currentId++, creator, null);
         game.generateInitialField();
         games.add(game);
         return game;
     }
 
-    public Optional<Game> get(int id) {
+    public Optional<ServerGame> get(int id) {
         return games.stream().filter(game -> game.id == id).findFirst();
     }
 
-    public Optional<Move> makeMove(Game game, int x, int y, int oldX, int oldY, User player) {
+    public Optional<Move> makeMove(ServerGame game, int x, int y, int oldX, int oldY, User player) {
         try {
             var move = new Move(x, y, oldX, oldY);
             var board = game.board;
@@ -65,13 +65,13 @@ public class GameRepository {
 
     }
 
-    public Game join(int gameId, int userId) {
-        Optional<Game> gameOptional = get(gameId);
+    public ServerGame join(int gameId, int userId) {
+        Optional<ServerGame> gameOptional = get(gameId);
         if (gameOptional.isEmpty()) {
             System.out.println("Game could not be joined: Not found.");
             return null;
         }
-        Game game = gameOptional.get();
+        ServerGame game = gameOptional.get();
         if (game.hasPlayer(userId)) {
             System.out.println("Game could not be joined: User already in game.");
             return null;
@@ -90,11 +90,11 @@ public class GameRepository {
     }
 
     public boolean setStatus(int gameId, GameStatus status) {
-        Optional<Game> gameOptional = get(gameId);
+        Optional<ServerGame> gameOptional = get(gameId);
         if (gameOptional.isEmpty()) {
             return false;
         }
-        Game game = gameOptional.get();
+        ServerGame game = gameOptional.get();
         game.status = status;
         GameStatusChangedEvent event = new GameStatusChangedEvent(gameId, status);
         chessSocket.emitEvent(event, game.getPlayers());

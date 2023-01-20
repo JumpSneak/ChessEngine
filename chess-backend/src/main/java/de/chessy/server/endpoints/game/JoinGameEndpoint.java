@@ -1,6 +1,6 @@
 package de.chessy.server.endpoints.game;
 
-import de.chessy.game.Game;
+import de.chessy.game.ServerGame;
 import de.chessy.game.GameRepository;
 import de.chessy.server.ChessSocket;
 import de.chessy.server.Errors;
@@ -24,7 +24,7 @@ public class JoinGameEndpoint extends HttpEndpoint {
             return;
         }
         User user = request.getAttribute("user");
-        Game joinedGame = gameRepository.join(joinGameDto.gameId(), user.id());
+        ServerGame joinedGame = gameRepository.join(joinGameDto.gameId(), user.id());
         if (joinedGame == null) {
             response.setStatusCode(400);
             response.send(Errors.GAME_NOT_JOINED);

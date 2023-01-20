@@ -1,4 +1,4 @@
-package de.chessy.utils;
+package core.chessy.utils;
 
 public class SerializationException extends Exception {
     public SerializationException(String message) {

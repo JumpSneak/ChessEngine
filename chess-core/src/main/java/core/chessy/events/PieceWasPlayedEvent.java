@@ -1,4 +1,4 @@
-package de.chessy.events;
+package core.chessy.events;
 
 public class PieceWasPlayedEvent extends Event {
 

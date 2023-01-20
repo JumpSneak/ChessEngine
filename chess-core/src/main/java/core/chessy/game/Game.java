@@ -1,6 +1,6 @@
-package de.chessy.game;
+package core.chessy.game;
 
-import de.chessy.game.pieces.PieceMetadata;
+import core.chessy.game.pieces.PieceMetadata;
 
 import java.util.Map;
 

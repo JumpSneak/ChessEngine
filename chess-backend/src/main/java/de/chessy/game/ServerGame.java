@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Game {
+public class ServerGame extends Game {
 
     public int id;
     public Integer white;
@@ -20,7 +20,7 @@ public class Game {
 
     public GameStatus status;
 
-    public Game(int id, Integer white, Integer black) {
+    public ServerGame(int id, Integer white, Integer black) {
         this.id = id;
         this.white = white;
         this.black = black;

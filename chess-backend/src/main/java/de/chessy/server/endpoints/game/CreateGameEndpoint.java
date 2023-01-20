@@ -1,6 +1,6 @@
 package de.chessy.server.endpoints.game;
 
-import de.chessy.game.Game;
+import de.chessy.game.ServerGame;
 import de.chessy.game.GameRepository;
 import de.chessy.server.Errors;
 import de.chessy.server.responses.CreateGameResponse;
@@ -16,7 +16,7 @@ public class CreateGameEndpoint extends HttpEndpoint {
     @Override
     public void onRequest(HttpRequest request, HttpResponse response) {
         User user = request.getAttribute("user");
-        Game game = GameRepository.getInstance().create(user.id());
+        ServerGame game = GameRepository.getInstance().create(user.id());
         if (game == null) {
             response.setStatusCode(400);
             response.send(Errors.GAME_NOT_CREATED);
