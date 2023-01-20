@@ -26,7 +26,7 @@ publishing {
     repositories {
         maven {
             credentials {
-                password = project.findProperty("gpr.user") ?: "julian-hartl"
+                password = project.findProperty("gpr.user") ?: "JumpSneak"
                 username = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
             }
             name = "GitHubPackages"
