@@ -1,7 +1,17 @@
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# GitHub recommends pinning actions to a commit SHA.
+# To get a newer version, you will need to update the SHA.
+# You can also reference a tag or branch, but the action may change without warning.
+
 name: Publish package to GitHub Packages
 on:
   push:
-    branches: ["*"]
+      branches: ["*"]
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -14,8 +24,12 @@ jobs:
         with:
           java-version: '17'
           distribution: 'corretto'
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
       - name: Publish package
-        run: mvn --batch-mode deploy
-        working-directory: ./chess-core
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: publish
+          build-directory: ./chess-core
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
