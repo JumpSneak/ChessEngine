@@ -6,4 +6,7 @@ public class Event {
     public Event(String eventKey) {
         this.eventKey = eventKey;
     }
+
+    public Event() {
+    }
 }
