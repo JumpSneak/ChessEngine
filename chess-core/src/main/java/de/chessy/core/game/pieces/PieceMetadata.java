@@ -1,4 +1,4 @@
-package core.chessy.game.pieces;
+package de.chessy.core.game.pieces;
 
 public abstract class PieceMetadata {
 

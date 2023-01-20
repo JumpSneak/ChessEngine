@@ -4,7 +4,7 @@ plugins {
 
 }
 
-group 'core.chessy'
+group 'de.chessy'
 version '0.0.1-SNAPSHOT'
 
 repositories {

@@ -1,6 +1,6 @@
-package core.chessy.events;
+package de.chessy.core.events;
 
-import core.chessy.game.GameStatus;
+import de.chessy.core.game.GameStatus;
 
 public class GameStatusChangedEvent extends Event {
 

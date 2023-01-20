@@ -1,4 +1,4 @@
-package core.chessy.utils;
+package de.chessy.core.utils;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;

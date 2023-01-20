@@ -1,4 +1,4 @@
-package core.chessy.game;
+package de.chessy.core.game;
 
 public enum GameStatus {
     WHITE_WON,
