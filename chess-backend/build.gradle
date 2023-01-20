@@ -6,6 +6,18 @@ plugins {
 group 'de.chessy'
 version '1.0-SNAPSHOT'
 
+def readEnvFile(String path) {
+    def envFile = file(path)
+    if (envFile.exists()) {
+        envFile.readLines().each { line ->
+            def (key, value) = line.tokenize("=")
+            if (key && value) {
+                System.setProperty(key, value)
+            }
+        }
+    }
+}
+
 repositories {
     mavenCentral()
 
@@ -14,8 +26,9 @@ repositories {
         name = "GitHubPackages"
         url = "https://maven.pkg.github.com/JumpSneak/ChessEngine"
         credentials {
-            username = System.getenv("GITHUB_ACTOR") ?: "julian-hartl"
-            password = System.getenv("GITHUB_TOKEN") ?: "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"
+            readEnvFile("../.gpr.env")
+            username = System.getenv("GITHUB_ACTOR") ?: property("GPR_USER")
+            password = System.getenv("GITHUB_TOKEN") ?: property("GPR_TOKEN")
         }
     }
 }

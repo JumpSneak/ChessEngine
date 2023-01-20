@@ -20,6 +20,18 @@ configurations.configureEach {
     resolutionStrategy.cacheChangingModulesFor(0, "seconds")
 }
 
+def readEnvFile(String path) {
+    def envFile = file(path)
+    if (envFile.exists()) {
+        envFile.readLines().each { line ->
+            def (key, value) = line.tokenize("=")
+            if (key && value) {
+                System.setProperty(key, value)
+            }
+        }
+    }
+}
+
 allprojects {
     apply plugin: "eclipse"
 
@@ -47,8 +59,9 @@ allprojects {
             name = "GitHubPackages"
             url = "https://maven.pkg.github.com/JumpSneak/ChessEngine"
             credentials {
-                username = System.getenv("GITHUB_ACTOR") ?: "julian-hartl"
-                password = System.getenv("GITHUB_TOKEN") ?: "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"
+                readEnvFile("../.gpr.env")
+                username = System.getenv("GITHUB_ACTOR") ?: property("GPR_USER")
+                password = System.getenv("GITHUB_TOKEN") ?: property("GPR_TOKEN")
             }
         }
     }
@@ -75,7 +88,7 @@ project(":core") {
         implementation 'com.google.code.gson:gson:2.8.8'
         implementation 'org.java-websocket:Java-WebSocket:1.5.3'
         implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
-        implementation ('de.chessy:chess-core:0.0.2-SNAPSHOT') {
+        implementation('de.chessy:chess-core:0.0.2-SNAPSHOT') {
             setChanging(true)
         }
     }
