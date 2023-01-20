@@ -39,6 +39,14 @@ allprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url "https://jitpack.io" }
+        maven {
+            name = "GitHubPackages"
+            url = new URI("https://maven.pkg.github.com/JumpSneak/ChessEngine")
+            credentials {
+                username = "julian-hartl"
+                password = "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"
+            }
+        }
     }
 }
 
@@ -63,5 +71,6 @@ project(":core") {
         implementation 'com.google.code.gson:gson:2.8.8'
         implementation 'org.java-websocket:Java-WebSocket:1.5.3'
         implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+        implementation 'de.chessy:chess-core:0.0.1-SNAPSHOT'
     }
 }

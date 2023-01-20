@@ -8,6 +8,15 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+
+    maven {
+        name = "GitHubPackages"
+        url = new URI("https://maven.pkg.github.com/JumpSneak/ChessEngine")
+        credentials {
+            username = "julian-hartl"
+            password = "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"
+        }
+    }
 }
 
 dependencies {
@@ -18,6 +27,9 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
     implementation 'org.postgresql:postgresql:42.1.4'
     implementation 'org.java-websocket:Java-WebSocket:1.5.3'
+    implementation('de.chessy:chess-core:0.0.1-SNAPSHOT') {
+        isChanging()
+    }
 }
 
 application {

@@ -44,7 +44,7 @@ jobs:
       working-directory: ./chess-client
       run: gradle build
 
-    build-core:
+build-core:
 
     runs-on: ubuntu-latest
     steps:
